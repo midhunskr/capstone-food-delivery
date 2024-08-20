@@ -5,7 +5,7 @@ export const createRestaurant = async (req, res) => {
     
     try {
         //Import and assign required fields from req.body to variables
-        const { name, description, location} = req.body 
+        const { name, description, location} = req.body
 
         //Create new Restaurant
         const restaurant = new Restaurant({
@@ -75,7 +75,6 @@ export const updateRestaurant = async (req, res) => {
 //Delete restaurant
 export const deleteRestaurant = async (req, res) => {
 
-    //Find and delete restaurant
     try {
         await Restaurant.findOneAndDelete(req.params.id)
         res.status(201).json({success: true, message: 'Restaurant deleted'})
