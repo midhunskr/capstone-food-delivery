@@ -1,12 +1,23 @@
-import { Menu } from "../models/menuItemModel.js";
-import { cloudinaryInstance } from "../config/cloudinary.js";
+import { Menu } from "../models/menuItemModel.js"
+import { cloudinaryInstance } from "../config/cloudinary.js"
+import { Restaurant } from "../models/restaurantModel.js";
 
 //Create a menu item
 export const createMenuItem = async (req, res) => {
 
     try {
         const {name, description, price, availability, restaurantId} = req.body
-        
+
+        // Check for missing fields
+        if (!name || !price || !restaurantId) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+
+        //Error handling for Menu Item exist
+        let menuItemExist = await Menu.findOne({ name, restaurant: restaurantId})
+        if (menuItemExist) {
+            return res.status(400).json({ success: false, message: `${menuItemExist.name} already exists!` })
+        }
 
         //Upload an image
         let uploadedImage = null;
@@ -33,8 +44,11 @@ export const createMenuItem = async (req, res) => {
         //Save the menu item
         const createdMenuItem = await menuItem.save()
 
+        //
+        const restaurantName = await Restaurant.findById(createdMenuItem.restaurant)
+
         //Success response
-        res.status(201).json({ success: true, message: `${createdMenuItem.name} created successfully` })
+        res.status(201).json({ success: true, message: `'${createdMenuItem.name}' created successfully under restaurant '${restaurantName.name}'!`, createdMenuItem })
 
     } catch (error) {
         console.error('Error creating menu item', error);
@@ -77,9 +91,21 @@ export const updateMenuItem = async (req, res) => {
 //Delete menu item
 export const deleteMenuItem = async (req, res) => {
     try {
-        await Menu.findOneAndDelete(req.params.id)
-        res.status(201).json({success: true, message: 'Item deleted'})
+        const menuItem = await Menu.findOneAndDelete(req.params.id[id])
+        
+        res.status(201).json({success: true, message: `Item '${menuItem.name}' deleted successfully!`, menuItem})
     } catch (error) {
         res.status(404).json({success: false, message: 'Item not found'})
     }
+
+    // const menuItem = await Menu.findById(req.body)
+    // console.log(menuItem);
+    
+
+    // if (menuItem) {
+    //     await menuItem.remove()
+    //     res.json({ message: 'Menu item removed' })
+    // } else {
+    //     res.status(404).json({ message: 'Menu item not found' })
+    // }
 }

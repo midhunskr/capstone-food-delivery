@@ -63,10 +63,10 @@ export const loginUser = async (req, res) => {
         }
 
         //Tokenize user data
-        const token = generateUserToken(user.id, user.role)
+        const token = generateUserToken(user.id, user.role, user.name)
 
         //Assign token to cookie
-        res.cookie('token', token)
+        res.cookie('token', token, {httpOnly: true})
 
         //Success response
         res.json({
@@ -75,8 +75,7 @@ export const loginUser = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            token,
-            message: `${user.role} login successfully!`
+            message: "'" + user.name + "'" + " logged in as " + "'" + user.role + "'" + " successfully!",
         })
 
     } catch (error) {
@@ -95,7 +94,7 @@ export const userProfile = async (req, res) => {
         const userData = await User.findById(id).select("-password")
 
         //Sucess response
-        res.json({success: true, message: userData.name + userData.role + " profile accessed successfully!", data: userData})
+        res.json({success: true, message: "'" + userData.name + "'" + " accessed as " + "'" + userData.role + "'" + " successfully!", data: userData})
 
     } catch (error) {
         res.status(error.status || 500).json({message: error.messaage || 'Internal server error'})
@@ -111,11 +110,12 @@ export const getAllUsers = async (req, res) => {
         // Send the users in the response
         res.status(200).json({
             success: true,
+            messaage: "Listed all users sucessfully!",
             count: users.length,
-            users,
+            users
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message })
     }
 }
 
@@ -125,13 +125,13 @@ export const deleteUser = async (req, res) => {
         const user = await User.findById(req.params.id);
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' })
         }
 
         await user.deleteOne();
-        res.status(200).json({ success: true, message: 'User deleted successfully' });
+        res.status(200).json({ success: true, message: "'" + user.name + "'" + ' successfully removed from ' + user.role + "'s list!" })
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message })
     }
 };
 
@@ -141,13 +141,17 @@ export const checkUser = async (req, res, next) => {
     try {
         //Fetch verified user from 'authMiddleware/authUser'
         const user = req.user
+        const userName = userData.name
+        console.log(userName)
+        
+    
         //Error handling
         if(!user) {
             return res.status(400).json({success: false, messaage:'authUser failed, user not authenticated'})
         }
 
         //Sucess response
-        res.json({success: true, message: "User profile checked successfully!"})
+        res.json({success: true, message: "'" + user.name + "'" + " verified as " + "'" + user.role + "'"})
 
     } catch (error) {
         res.status(error.status || 500).json({message: error.messaage || 'Internal server error'})

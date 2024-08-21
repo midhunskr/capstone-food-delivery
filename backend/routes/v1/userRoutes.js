@@ -8,10 +8,11 @@ const router = express.Router()
 router.post('/register', registerUser)
 router.post('/login', loginUser)
 router.post('/profile/:id', authUser, userProfile)
+router.post('/profile/admin/:id', authUser, admin, userProfile)
 router.get('/all-users', authUser, admin, getAllUsers)
 router.delete('/:id', authUser, admin, deleteUser)
 
 //Check user from Frontend
-router.get('/check-user', authUser, checkUser)
+router.get('/check-user/:id', authUser, checkUser)
 
 export default router
