@@ -1,25 +1,13 @@
 import express from 'express'
+import { admin, authUser } from '../../middlewares/authMiddleware.js'
+import { createOrder, deleteOrder, getAllOrdersAdmin, getAllOrdersUser } from '../../controllers/orderController.js'
 
 const router = express.Router()
 
-router.get('/', async(req, res, next) => {
-    console.log('order get method accessed');
-    
-})
-
-router.post('/', async(req, res, next) => {
-    console.log('order post method accessed');
-    
-})
-
-router.put('/', async(req, res, next) => {
-    console.log('order put method accessed');
-    
-})
-
-router.delete('/', async(req, res, next) => {
-    console.log('order delete method accessed');
-    
-})
+router.route('/create').post(authUser, createOrder)
+router.route('/user-orders').get(authUser, getAllOrdersUser)
+router.route('/all-orders').get(authUser, admin, getAllOrdersAdmin)
+router.route('/:id')
+    .delete(authUser, admin, deleteOrder)
 
 export default router

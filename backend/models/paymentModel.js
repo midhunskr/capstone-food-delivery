@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
 
 const paymentSchema = new mongoose.Schema({
-    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
-    amount: { type: Number, required: true },
+    order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true},
+    total: { type: Number, required: true },
+    paymentMethod: { type: String, required: true },
     status: { type: String, enum: ['Pending', 'Completed', 'Failed'], default: 'Pending' },
-    transactionId: { type: String, unique: true, required: true },
     },
     { timestamps: true }
 )

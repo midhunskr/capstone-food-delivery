@@ -1,25 +1,9 @@
-import express from 'express'
+import express from "express"
+import { authUser } from "../../middlewares/authMiddleware.js"
+import { createPayment } from "../../controllers/paymentController.js"
 
 const router = express.Router()
 
-router.get('/', async(req, res, next) => {
-    console.log('payment item get method accessed');
-    
-})
-
-router.post('/', async(req, res, next) => {
-    console.log('payment item post method accessed');
-    
-})
-
-router.put('/', async(req, res, next) => {
-    console.log('payment item put method accessed');
-    
-})
-
-router.delete('/', async(req, res, next) => {
-    console.log('payment item delete method accessed');
-    
-})
+router.route('/').post(authUser, createPayment)
 
 export default router

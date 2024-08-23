@@ -7,8 +7,8 @@ const router = express.Router()
 
 router.post('/create/:restaurantId', authUser, admin, upload.single('image'), createMenuItem)
 router.get('/all-items/:restaurantId', authUser, getMenuItems)
-router.get('/item/:id', authUser, menuItemById)
-router.put('/item/:id', authUser, admin, upload.single('image'), updateMenuItem)
-router.delete('/item/:id', authUser, admin, deleteMenuItem)
+router.get('/:id', authUser, menuItemById)
+router.put('/:id', authUser, admin, upload.single('image'), updateMenuItem)
+router.delete('/:id', authUser, admin, deleteMenuItem)
 
 export default router

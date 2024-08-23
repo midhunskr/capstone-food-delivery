@@ -1,20 +1,19 @@
 import mongoose from "mongoose"
 
 const orderSchema = new mongoose.Schema({
-    customer: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
     },
     restaurant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
         required: true
     },
-    items: [{
+    menuItems: [{
         menuItem: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'MenuItem',
+            ref: 'Menu',
             required: true
         },
         quantity: {
@@ -22,14 +21,15 @@ const orderSchema = new mongoose.Schema({
             required: true
         }
     }],
-    totalPrice: { type: Number, required: true },
+    totalPrice: { type: Number},
+    deliveryPerson: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     status: {
         type: String, enum: ['pending', 'preparing', 'out-for-delivery', 'delivered', 'cancelled'],
         default: 'pending'
     },
-    deliveryAddress: {
-        type: String, required: true
-    },
+    deliveryAddress: {type: String},
+    deliveryFee: { type: Number },
+    taxRate: { type: Number }
     },
     { timestamps: true }
 )

@@ -31,8 +31,8 @@ export const registerUser = async (req, res) => {
         const token = generateUserToken(email)
 
         //assign token to cookie
-        res.cookie('token', token)
-        res.json({success: true, message: newUser.name + " resgistered as " + "'" +newUser.role + "'" + " successfully!"})
+        res.cookie('token', token, {httpOnly: true})
+        res.json({success: true, message: newUser.name + " resgistered as " + "'" + newUser.role + "'" + " successfully!"})
 
     } catch (error) {
         res.status(error.status || 500).json({message: error.messaage || 'Internal server error'})
@@ -63,7 +63,7 @@ export const loginUser = async (req, res) => {
         }
 
         //Tokenize user data
-        const token = generateUserToken(user.id, user.role, user.name)
+        const token = generateUserToken(user.id, user.role)
 
         //Assign token to cookie
         res.cookie('token', token, {httpOnly: true})
@@ -106,6 +106,7 @@ export const getAllUsers = async (req, res) => {
     try {
         // Fetch all users from the database
         const users = await User.find().select('-password'); // Exclude the password field
+        
         
         // Send the users in the response
         res.status(200).json({

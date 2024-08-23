@@ -1,6 +1,6 @@
 import { Menu } from "../models/menuItemModel.js"
 import { cloudinaryInstance } from "../config/cloudinary.js"
-import { Restaurant } from "../models/restaurantModel.js";
+import { Restaurant } from "../models/restaurantModel.js"
 
 //Create a menu item
 export const createMenuItem = async (req, res) => {
@@ -91,21 +91,10 @@ export const updateMenuItem = async (req, res) => {
 //Delete menu item
 export const deleteMenuItem = async (req, res) => {
     try {
-        const menuItem = await Menu.findOneAndDelete(req.params.id[id])
-        
-        res.status(201).json({success: true, message: `Item '${menuItem.name}' deleted successfully!`, menuItem})
+        const menuItem = await Menu.findByIdAndDelete(req.params.id)
+        const restaurant = await Restaurant.findById(menuItem.restaurant)
+        res.status(201).json({success: true, message: `Item '${menuItem.name}' deleted from '${restaurant.name}' successfully!`, menuItem})
     } catch (error) {
         res.status(404).json({success: false, message: 'Item not found'})
     }
-
-    // const menuItem = await Menu.findById(req.body)
-    // console.log(menuItem);
-    
-
-    // if (menuItem) {
-    //     await menuItem.remove()
-    //     res.json({ message: 'Menu item removed' })
-    // } else {
-    //     res.status(404).json({ message: 'Menu item not found' })
-    // }
 }

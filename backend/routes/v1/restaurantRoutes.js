@@ -5,10 +5,10 @@ import { createRestaurant, deleteRestaurant, getRestaurant, getRestaurantById, u
 const router = express.Router()
 
 //Restaurant routes
-router.post('/create-restaurant', authUser, admin, createRestaurant)
+router.post('/create', authUser, admin, createRestaurant)
 router.get('/all-restaurants', authUser, getRestaurant)
-router.get('/restaurants/:id', authUser, getRestaurantById)
-router.put('/restaurants/:id', authUser, admin, updateRestaurant)
-router.delete('/restaurants/:id', authUser, admin, deleteRestaurant)
+router.get('/:id', authUser, getRestaurantById)
+router.put('/:id', authUser, admin, updateRestaurant)
+router.delete('/:id', authUser, admin, deleteRestaurant)
 
 export default router
