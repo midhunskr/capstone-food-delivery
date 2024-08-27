@@ -79,15 +79,14 @@ export const updateRestaurant = async (req, res) => {
 
     } catch (error) {
         res.status(404).json({ success: false, message: 'Restaurant not found' })
-    }
-    
+    } 
 }
 
 //Delete restaurant
 export const deleteRestaurant = async (req, res) => {
 
     try {
-        const restaurant = await Restaurant.findOneAndDelete(req.params.id)
+        const restaurant = await Restaurant.findByIdAndDelete(req.params.id)
         res.status(201).json({success: true, message: "Restaurant '" + restaurant.name + "' deleted successfully!", restaurant})
     } catch (error) {
         res.status(404).json({success: false, message: 'Restaurant not found'})

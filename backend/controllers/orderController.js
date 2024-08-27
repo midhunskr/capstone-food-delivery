@@ -20,7 +20,7 @@ export const createOrder = async (req, res) => {
     let totalPrice = 0;
 
     for (const item of menuItems) {
-      const menuItem = await Menu.findById(item.menuItem);
+      const menuItem = await Menu.findById(item.menuItem)
       totalPrice += menuItem.price * item.quantity;
     }
 
@@ -38,27 +38,35 @@ export const createOrder = async (req, res) => {
     const userFind = await User.findById(req.user.id);
     const restaurantFind = await Restaurant.findById(restaurantId);
 
-    //Create new order instance
-    const order = new Order({
-      user: userId,
-      restaurant: restaurantId,
-      menuItems,
-      deliveryFee,
-      taxRate,
-      totalPrice,
-      deliveryAddress,
-      status,
-    });
+    //Check user role from request body
+    const userRoleCheck = await User.findById(userId);
 
-    //Save the order in to DB
-    const createdOrder = await order.save();
+    if (userFind.role === "user" && userRoleCheck.role === "user" || userFind.role === "admin" && userRoleCheck.role === "admin") {
+      //Create new order instance
+      const order = new Order({
+        user: userId,
+        restaurant: restaurantId,
+        menuItems,
+        totalPrice,
+        deliveryAddress,
+        status,
+      });
 
-    //Success response
-    res.status(201).json({
-      success: true,
-      message: `Order created successfully by '${userFind.name}' for '${restaurantFind.name}'`,
-      order: createdOrder,
-    });
+      //Save the order in to DB
+      const createdOrder = await order.save();
+
+      //Success response
+      res.status(201).json({
+        success: true,
+        message: `Order created successfully by '${userFind.name}' for '${restaurantFind.name}'`,
+        order: createdOrder,
+      });
+    } else {
+      res.json({
+        message:
+          "Unable to create order, user Id is not authenticated as 'admin'",
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -67,24 +75,35 @@ export const createOrder = async (req, res) => {
   }
 };
 
-//Get all orders (User)
-export const getAllOrdersUser = async (req, res) => {
+// Get orders for the logged-in user
+export const getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id });
-    res.json(orders);
+
+    // Find orders where the 'user' field matches the ID of the logged-in user
+    const orders = await Order.find({ user: req.user.id }).populate('restaurant', 'name')
+    
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ success: false, message: 'No orders found for this user.' });
+    }
+
+    res.status(200).json({
+      success: true,
+      total_orders: orders.length,
+      orders
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error, order not found" });
+    res.status(500).json({ success: false, message: 'Server error, unable to retrieve orders.' });
   }
 };
 
 // Get all orders (Admin access only)
 export const getAllOrdersAdmin = async (req, res) => {
   try {
-
     // Fetch all orders, populating user and restaurant details
-    const orders = await Order.find().populate('user', 'name email').populate('restaurant', 'name location')
+    const orders = await Order.find()
+      .populate("user", "name email")
+      .populate("restaurant", "name location");
 
     res.status(200).json({
       success: true,
@@ -94,7 +113,7 @@ export const getAllOrdersAdmin = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server error, unable to fetch orders.',
+      message: "Server error, unable to fetch orders.",
     });
   }
 };
@@ -102,16 +121,25 @@ export const getAllOrdersAdmin = async (req, res) => {
 //Get order by Id
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate('user', 'name email').populate('restaurant', 'name location');
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name email")
+      .populate("restaurant", "name location");
 
     // Error handling for order not found
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found.' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found." });
     }
 
     // Allow only the user who placed the order or an admin to view the order
-    if (req.user.role !== 'admin' && order.user._id.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: 'Access denied.' });
+    if (
+      req.user.role !== "admin" &&
+      order.user._id.toString() !== req.user._id.toString()
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied." });
     }
 
     res.status(200).json({
@@ -121,7 +149,7 @@ export const getOrderById = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Server error, unable to fetch order.',
+      message: "Server error, unable to fetch order.",
     });
   }
 };
