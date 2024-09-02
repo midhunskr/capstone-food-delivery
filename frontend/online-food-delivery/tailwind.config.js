@@ -11,7 +11,7 @@ module.exports = {
         tradewind: "#68b19f",
         teal: "#367d6b",
         gainsboro: "#d9d9d9",
-        dark: "#2b2b2b",
+        "text-dark": "#2B2B2B",
         gray: {
           "100": "rgba(255, 255, 255, 0.65)",
           "200": "rgba(9, 20, 47, 0.65)",
