@@ -1,8 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap");
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Montserrat;
+}
+
 .container{
-    height: 650px;
+    height: 600px;
     width: 410px;
-    background: #eee;
-    border-radius: 15px;
+    background: #f3f5eb;
+    border-radius: 25px;
     display: flex;
     justify-content: center;
     align-items: center;

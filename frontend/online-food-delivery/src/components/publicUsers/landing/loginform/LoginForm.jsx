@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import './LoginForm.css'
-// import 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'; // Ensure boxicons is installed via npm or linked properly
+import 'boxicons';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { userLogin } from '../../../../services/userApi';
 
 export const LoginForm = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -12,20 +16,47 @@ export const LoginForm = () => {
   const handleLoginClick = () => {
     setIsRegistering(false);
   };
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const navigate = useNavigate()
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await userLogin(data)
+      console.log(response);
+      
+      
+      if (response.success) {
+        toast.success('Welcome back!');
+        navigate('/user');     
+      } else {
+        // Handle the case where the login is not successful, even if there's no error
+        toast.error('Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      toast.error('Login failed. Something went wrong.');
+      console.log(error);  
+    }  
+  }
 
   return (
     <div className="container">
       <div className={`Form login-form ${isRegistering ? 'active' : ''}`}>
         <h2>Login</h2>
-        <form action="#">
-          <div className="input-box">
-            <i className='bx bxs-user'></i>
-            <label htmlFor="#">Username</label>
-            <input type="text" placeholder="Enter Your Username*" />
-          </div>
+        <form action="#" onSubmit={handleSubmit(onSubmit)}>
           <div className="input-box">
             <i className='bx bxs-envelope'></i>
-            <input type="password" placeholder="Enter Your Password*" />
+            <label htmlFor="#">Email</label>
+            <input type="email" {...register("email")} placeholder="Enter Your Email*" />
+          </div>
+          <div className="input-box">
+            <i className='bx bxs-lock-alt'></i>
+            <input type="password" {...register("password")} placeholder="Enter Your Password*" />
             <label htmlFor="#">Password</label>
           </div>
           <div className="forgot-section">
@@ -36,7 +67,7 @@ export const LoginForm = () => {
               <a href="#">Forgot Password?</a>
             </span>
           </div>
-          <button className="btn">Login</button>
+          <button type="submit" className="btn">Login</button>
         </form>
         <p>Or Sign up using</p>
         <div className="social-media">
@@ -53,17 +84,17 @@ export const LoginForm = () => {
         <h2>Register</h2>
         <form action="#">
           <div className="input-box">
-            <i className='bx bxs-user'></i>
+            <i className='bx bxs-envelope'></i>
             <label htmlFor="#">Username</label>
             <input type="text" placeholder="Enter Your Username*" />
           </div>
           <div className="input-box">
-            <i className='bx bxs-envelope'></i>
+            <i className='bx bxs-lock-alt'></i>
             <input type="password" placeholder="Enter Your Password*" />
             <label htmlFor="#">Password</label>
           </div>
           <div className="input-box">
-            <i className='bx bxs-envelope'></i>
+            <i className='bx bxs-lock-alt'></i>
             <input type="password" placeholder="Confirm Your Password*" />
             <label htmlFor="#">Confirm Password</label>
           </div>
