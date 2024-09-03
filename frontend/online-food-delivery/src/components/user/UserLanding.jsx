@@ -6,11 +6,11 @@ import { CuisineListing } from './CuisineListing'
 export const UserLanding = () => {
   return (
     <div>
-
+      <div className='bg-bg-white text-dark'>
         <ItemScroller/>
         <RestaurantListing/>
         <CuisineListing/>
-
+        </div>
     </div>
   )
 }

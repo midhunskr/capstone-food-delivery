@@ -5,6 +5,7 @@ import { LoginPage } from "../pages/user/LoginPage";
 import { SignUpPage } from "../pages/user/SignUpPage";
 import { ResraurantPage } from "../pages/user/ResraurantPage";
 import { CartPage } from "../pages/user/CartPage";
+import { UserLayout } from "../layouts/userLayout";
 
 export const router = createBrowserRouter([
     {
@@ -33,4 +34,14 @@ export const router = createBrowserRouter([
         }
       ]
     },
+    {
+      path: 'user',
+      element: <UserLayout/>,
+      children: [
+        {
+          path: '',
+          element: <HomePage/>
+        }
+      ]
+    }
   ])

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export const RestaurantListing = ({ className = "" }) => {
   return (
     <div
-      className={`self-stretch flex flex-row items-start justify-center py-[0rem] px-[1.25rem] box-border max-w-full text-left text-[1.5rem] text-dark font-montserrat ${className}`}
+      className={`self-stretch flex flex-row items-start justify-center py-[0rem] px-[1.25rem] pb-[3rem] box-border max-w-full text-left text-[1.5rem] text-dark font-montserrat ${className}`}
     >
       <div className="h-[19.688rem] w-[70.5rem] flex flex-col items-start justify-start pt-[0rem] px-[0rem] pb-[17.937rem] box-border gap-[2.012rem] max-w-full mq450:h-auto mq750:gap-[1rem] mq750:pb-[11.688rem] mq750:box-border">
         <div className="self-stretch flex flex-row items-start justify-between py-[0rem] pl-[0.5rem] pr-[0rem] box-border shrink-0 max-w-full gap-[1.25rem] mq450:flex-wrap">
@@ -27,7 +27,7 @@ export const RestaurantListing = ({ className = "" }) => {
             </div>
           </div>
         </div>
-        <div className="w-[70.5rem] overflow-x-auto flex flex-row items-end justify-start py-[0rem] px-[0.625rem] box-border gap-[2.818rem] shrink-0 max-w-full text-[1.413rem] text-white font-quicksand mq750:gap-[1.438rem]">
+        <div className="w-[70.5rem] flex flex-row items-end justify-start py-[0rem] px-[0.625rem] box-border gap-[2.818rem] shrink-0 max-w-full text-[1.413rem] text-white font-quicksand mq750:gap-[1.438rem]">
           <div className="w-[15.2rem] shrink-0 flex flex-col items-start justify-start gap-[1.062rem]">
             <div className="self-stretch flex flex-col items-start justify-end pt-[6.937rem] px-[0.875rem] pb-[0.756rem] relative gap-[0.556rem]">
               <img
@@ -68,7 +68,7 @@ export const RestaurantListing = ({ className = "" }) => {
             </div>
           </div>
           <div className="w-[15.2rem] shrink-0 flex flex-col items-start justify-start gap-[0.937rem]">
-            <div className="self-stretch rounded-[17.37px] flex flex-col items-start justify-end pt-[6.937rem] px-[0.875rem] pb-[0.756rem] relative gap-[0.375rem] bg-[url('/public/offer-details@3x.png')] bg-cover bg-no-repeat bg-[top]">
+            <div className="self-stretch rounded-[17.37px] flex flex-col items-start justify-end pt-[6.937rem] px-[0.875rem] pb-[0.756rem] relative gap-[0.375rem] bg-[url('/offer-details@3x.png')] bg-cover bg-no-repeat bg-[top]">
               <div className="w-[calc(100%_+_17.4px)] h-[calc(100%_+_17.4px)] absolute !m-[0] top-[0rem] right-[-1.087rem] bottom-[-1.087rem] left-[0rem] rounded-[17.37px] [background:linear-gradient(180deg,_rgba(217,_217,_217,_0),_rgba(0,_0,_0,_0.35)_38.5%,_rgba(0,_0,_0,_0.6)_67.5%,_rgba(0,_0,_0,_0.7))] border-white border-[8.7px] border-solid box-border" />
               <b className="w-[6.3rem] relative inline-block z-[1] mq450:text-[1.125rem]">
                 15% OFF
@@ -97,7 +97,7 @@ export const RestaurantListing = ({ className = "" }) => {
             </div>
           </div>
           <div className="h-[15.931rem] w-[15.2rem] shrink-0 flex flex-col items-start justify-start gap-[0.937rem]">
-            <div className="self-stretch h-[11.944rem] rounded-[17.37px] flex flex-col items-start justify-end pt-[8.025rem] px-[0.875rem] pb-[1.018rem] box-border relative gap-[0.375rem] bg-[url('/public/frame-3839@3x.png')] bg-cover bg-no-repeat bg-[top] shrink-0">
+            <div className="self-stretch h-[11.944rem] rounded-[17.37px] flex flex-col items-start justify-end pt-[8.025rem] px-[0.875rem] pb-[1.018rem] box-border relative gap-[0.375rem] bg-[url('/frame-3839@3x.png')] bg-cover bg-no-repeat bg-[top] shrink-0">
               <div className="w-full h-full absolute !m-[0] top-[0rem] right-[0rem] bottom-[0rem] left-[0rem] rounded-[17.37px] [background:linear-gradient(180deg,_rgba(0,_0,_0,_0),_rgba(0,_0,_0,_0.35)_38.5%,_rgba(0,_0,_0,_0.6)_67.5%,_rgba(0,_0,_0,_0.7))]" />
               <b className="relative inline-block min-w-[6.3rem] z-[1] mq450:text-[1.125rem]">
                 35% OFF

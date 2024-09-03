@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export const CuisineListing = ({ className = "" }) => {
   return (
     <div
-      className={`self-stretch flex flex-row items-start justify-center py-[0rem] px-[1.25rem] box-border max-w-full text-left text-[1.5rem] text-dark font-montserrat ${className}`}
+      className={`self-stretch flex flex-row items-start justify-center py-[0rem] px-[1.25rem] pb-[4rem] box-border max-w-full text-left text-[1.5rem] text-dark font-montserrat ${className}`}
     >
       <div className="w-[70.5rem] flex flex-col items-start justify-start gap-[1.956rem] max-w-full mq750:gap-[1rem]">
         <div className="self-stretch flex flex-row items-start justify-between py-[0rem] pl-[0.5rem] pr-[0rem] gap-[1.25rem] mq450:flex-wrap">
@@ -41,7 +41,7 @@ export const CuisineListing = ({ className = "" }) => {
             </div>
           </div>
         </div>
-        <div className="w-[70.5rem] overflow-x-auto flex flex-row items-start justify-start py-[0rem] px-[0.625rem] box-border gap-[2.818rem] max-w-full text-[1.413rem] text-white mq750:gap-[1.438rem]">
+        <div className="w-[70.5rem] flex flex-row items-start justify-start py-[0rem] px-[0.625rem] box-border gap-[2.818rem] max-w-full text-[1.413rem] text-white mq750:gap-[1.438rem]">
           <div className="w-[15.2rem] shrink-0 flex flex-row items-start justify-start pt-[7.981rem] px-[1rem] pb-[1.243rem] box-border relative">
             <img
               className="h-full w-full absolute !m-[0] top-[0rem] right-[0rem] bottom-[0rem] left-[0rem] max-w-full overflow-hidden max-h-full object-cover"

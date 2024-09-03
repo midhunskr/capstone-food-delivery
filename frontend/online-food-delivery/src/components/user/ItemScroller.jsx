@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 export const ItemScroller = ({ className = "" }) => {
   return (
     <div
-      className={`self-stretch flex flex-row items-start justify-center py-[0rem] px-[1.25rem] box-border max-w-full text-center text-[1.5rem] text-text-dark font-montserrat ${className}`}
+      className={`self-stretch flex flex-row items-start justify-center py-[4rem] px-[1.25rem] box-border max-w-full text-center text-[1.5rem] text-text-dark font-montserrat ${className}`}
     >
       <div className="w-[70.5rem] flex flex-col items-start justify-between min-h-[12.563rem] max-w-full">
         <div className="self-stretch flex flex-row items-center justify-between max-w-full gap-[1.25rem] mq750:flex-wrap">
@@ -28,7 +28,7 @@ export const ItemScroller = ({ className = "" }) => {
           </div>
         </div>
         <div className="w-[70.5rem] h-[9.738rem] overflow-x-auto shrink-0 flex flex-row items-center justify-between py-[0rem] px-[1.75rem] box-border gap-[1.25rem] max-w-full text-[1.25rem] text-item-tint">
-          <div className="h-[8.313rem] w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
@@ -39,7 +39,7 @@ export const ItemScroller = ({ className = "" }) => {
               Biriyani
             </div>
           </div>
-          <div className="h-[8.425rem] w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
@@ -50,7 +50,7 @@ export const ItemScroller = ({ className = "" }) => {
               Noodles
             </div>
           </div>
-          <div className="h-[8.813rem] w-[7.625rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="w-[7.625rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
@@ -61,7 +61,7 @@ export const ItemScroller = ({ className = "" }) => {
               Burgers
             </div>
           </div>
-          <div className="h-[9.044rem] w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
@@ -72,7 +72,7 @@ export const ItemScroller = ({ className = "" }) => {
               Pizzas
             </div>
           </div>
-          <div className="self-stretch w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="self-stretch h-[8.9rem] w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
@@ -83,7 +83,7 @@ export const ItemScroller = ({ className = "" }) => {
               Rolls
             </div>
           </div>
-          <div className="h-[9.206rem] w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
+          <div className="w-[8.25rem] shrink-0 flex flex-col items-center justify-between">
             <img
               className="self-stretch flex-1 relative max-w-full overflow-hidden max-h-full object-cover"
               loading="lazy"
