@@ -1,7 +1,8 @@
 // import React, { useState } from 'react';
-// import 'boxicons/css/boxicons.min.css'; // Ensure boxicons is installed via npm or linked properly
+// import './LoginForm.css'
+// // import 'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'; // Ensure boxicons is installed via npm or linked properly
 
-// export const AuthForm = () => {
+// export const LoginForm = () => {
 //   const [isRegistering, setIsRegistering] = useState(false);
 
 //   const handleRegisterClick = () => {

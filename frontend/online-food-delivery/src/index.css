@@ -1,31 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap");
 @font-face {
   font-family: "Arial Rounded MT Bold";
   src: url("/ARIALROUNDEDMT.TTF");
   font-weight: 400;
-}
-
-:root {
-  /* fonts */
-  --font-montserrat: Montserrat;
-
-  /* font sizes */
-  --font-size-base-5: 1.031rem;
-
-  /* Colors */
-  --bg-white: #f7f9f3;
-  --dark: #2b2b2b;
-
-  /* Gaps */
-  --gap-11xl: 1.875rem;
-
-  /* Paddings */
-  --padding-xl: 1.25rem;
-  --padding-mid-8: 1.112rem;
-  --padding-mid-6: 1.1rem;
-  --padding-9xs: 0.25rem;
 }
 
 @tailwind base;
