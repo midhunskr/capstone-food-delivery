@@ -1,31 +1,31 @@
+import daisyui from 'daisyui';
+const { default: daisyui } = daisyui;
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  plugins: [daisyui],
   theme: {
     extend: {
+      borderWidth: {
+        '8': '8px',
+      },
       colors: {
         "bg-white": "#f3f5eb",
+        "label-tint": "#808080",
+        "item-tint": "#484848",
         black: "#000",
         white: "#fff",
-        jaffa: "#f47c57",
-        tradewind: "#68b19f",
-        teal: "#367d6b",
-        gainsboro: "#d9d9d9",
         dark: "#2b2b2b",
         gray: {
           "100": "rgba(255, 255, 255, 0.65)",
           "200": "rgba(9, 20, 47, 0.65)",
           "300": "rgba(255, 255, 255, 0.2)",
         },
-        navy: "rgba(0, 0, 124, 0.2)",
-        goldenrod: "#f8cf7c",
-        darkkhaki: "#deb563",
         "bg-white1": "#f7f9f3",
       },
       spacing: {},
       fontFamily: {
-        quicksand: "Quicksand",
-        "arial-rounded-mt-bold": "'Arial Rounded MT Bold'",
         montserrat: "Montserrat",
       },
       borderRadius: {

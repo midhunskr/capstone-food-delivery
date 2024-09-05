@@ -8,9 +8,11 @@ export const UserHeader = ({ className = "" }) => {
     >
       <div className="flex flex-col items-start justify-start pt-[0.118rem] px-[0rem] pb-[0rem]">
         <div className="w-[2.25rem] flex flex-row items-center justify-between gap-[0.267rem]">
-          <input
-            className="m-0 self-stretch w-[0.944rem] relative min-h-[1.313rem]"
-            type="checkbox"
+        <img
+            className="h-[1.331rem] w-[1.038rem] relative min-h-[1.313rem]"
+            loading="lazy"
+            alt=""
+            src="/frame-3789.svg"
           />
           <img
             className="h-[1.331rem] w-[1.038rem] relative min-h-[1.313rem]"
@@ -22,12 +24,12 @@ export const UserHeader = ({ className = "" }) => {
       </div>
       <div className="w-[16.444rem] flex flex-row items-start justify-start py-[0rem] pl-[0rem] pr-[0.375rem] box-border gap-[1.543rem] text-center">
         <div className="w-[3.313rem] flex flex-col items-end justify-start gap-[0.318rem]">
-          <Link to={"/"}><div className="self-stretch relative leading-[121.88%] font-semibold inline-block min-w-[3.313rem]">Home</div></Link>
+          <Link to={"/"}><div className="self-stretch relative leading-[121.88%] font-semibold inline-block min-w-[3.313rem] text-dark">Home</div></Link>
           <div className="self-stretch h-[0.125rem] relative border-dark border-t-[2px] border-solid box-border" />
         </div>
         <div className="flex-1 flex flex-col items-start justify-start pt-[0.218rem] px-[0rem] pb-[0rem] text-left text-[0.875rem] text-gray-100 font-quicksand">
           <div className="self-stretch h-[1.125rem] relative">
-            <b className="absolute top-[0rem] left-[0rem] inline-block w-[10.063rem] h-[1.125rem] whitespace-nowrap">
+            <b className="absolute top-[0rem] left-[0rem] inline-block w-[10.063rem] h-[1.125rem] whitespace-nowrap text-label-tint font-normal">
               123, Street name, City....
             </b>
             <img
@@ -47,7 +49,7 @@ export const UserHeader = ({ className = "" }) => {
               src="/frame-3796.svg"
             />
           </div>
-          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[4.294rem]">
+          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[4.294rem] text-dark">
             Search
           </a>
         </div>
@@ -59,7 +61,7 @@ export const UserHeader = ({ className = "" }) => {
               src="/frame-41.svg"
             />
           </div>
-          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[3.863rem] shrink-0">
+          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[3.863rem] shrink-0 text-dark">
             Offers
           </a>
         </div>
@@ -71,8 +73,8 @@ export const UserHeader = ({ className = "" }) => {
               src="/frame-3791.svg"
             />
           </div>
-          <a className="[text-decoration:none] relative font-semibold text-[inherit]">
-            <p className="m-0">Help</p>
+          <a className="[text-decoration:none] relative font-semibold text-[inherit] text-dark">
+            Help
           </a>
         </div>
       </div>
@@ -85,7 +87,7 @@ export const UserHeader = ({ className = "" }) => {
               src="/clip-path-group.svg"
             />
           </div>
-          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[4.438rem] shrink-0 whitespace-nowrap">
+          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[4.438rem] shrink-0 whitespace-nowrap text-dark">
             Profile
           </a>
         </div>
@@ -97,7 +99,7 @@ export const UserHeader = ({ className = "" }) => {
               src="/frame-3798@2x.png"
             />
           </div>
-          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[2.813rem] whitespace-nowrap">
+          <a className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[2.813rem] whitespace-nowrap text-dark">
             Cart
           </a>
         </div>
