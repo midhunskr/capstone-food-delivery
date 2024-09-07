@@ -1,7 +1,7 @@
 import React from 'react'
-import { ItemScroller } from './ItemScroller'
-import { RestaurantListing } from './RestaurantListing'
-import { CuisineListing } from './CuisineListing'
+import { ItemScroller } from './restaurant/ItemScroller'
+import { RestaurantListing } from './restaurant/RestaurantListing'
+import { CuisineListing } from './restaurant/CuisineListing'
 
 export const UserLanding = () => {
   return (

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { axiosInstance } from '../../config/axioInstance'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const UserAuth = ({children}) => {
     const navigate = useNavigate()
+    
+    //Check user for all page locations & navigation
+    const location = useLocation()
     const [user, setUser] = useState()
   
     const checkUser = async() => {
@@ -24,6 +27,6 @@ export const UserAuth = ({children}) => {
   
     useEffect(()=> {
         checkUser()
-    })
+    }, [location.pathname])
     return user ? children : null
 }

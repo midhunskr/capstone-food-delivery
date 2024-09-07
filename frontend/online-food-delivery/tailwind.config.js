@@ -11,7 +11,7 @@ export default {
         '8': '8px',
       },
       colors: {
-        "bg-white": "#f3f5eb",
+        "bg-white": "#f7f9f2",
         "label-tint": "#808080",
         "item-tint": "#484848",
         black: "#000",
@@ -22,7 +22,11 @@ export default {
           "200": "rgba(9, 20, 47, 0.65)",
           "300": "rgba(255, 255, 255, 0.2)",
         },
-        "bg-white1": "#f7f9f3",
+        navy: "rgba(0, 0, 124, 0.2)",
+        jaffa: "#f47c57",       
+        tradewind: "#68b19f",
+        dark: "#2b2b2b",
+        gainsboro: "#d9d9d9",
       },
       spacing: {},
       fontFamily: {

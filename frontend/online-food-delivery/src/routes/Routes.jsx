@@ -6,8 +6,10 @@ import { CartPage } from "../pages/user/CartPage";
 import { UserLayout } from "../layouts/userLayout";
 import { PublicLandingPage } from "../pages/publicUsers/PublicLandingPage";
 import { AllRestaurants } from "../pages/user/restaurants/AllRestaurants";
-import { RestaurantPage } from "../pages/publicUsers/RestaurantPage";
+import { RestaurantPage } from "../pages/user/restaurants/RestaurantPage";
 import { UserAuth } from "./protectedRoutes/UserAuth";
+import { HelpPage } from "../pages/publicUsers/HelpPage";
+import { ProfilePage } from "../pages/user/ProfilePage";
 
 export const router = createBrowserRouter([
     {
@@ -19,12 +21,12 @@ export const router = createBrowserRouter([
             element: <PublicLandingPage/>
         },
         {
-          path: '/restaurants',
-          element: <RestaurantPage/>
+          path: 'signup',
+          element: <CartPage/>
         },
         {
-          path: '/signup',
-          element: <CartPage/>
+          path: 'help',
+          element: <HelpPage/>
         }
       ]
     },
@@ -45,8 +47,16 @@ export const router = createBrowserRouter([
           element: <AllRestaurants/>
         },
         {
+          path: 'restaurant/:id',
+          element: <RestaurantPage/>
+        },
+        {
           path: "pizzahut",
           element: <PizzaHut/>
+        },
+        {
+          path: "profile",
+          element: <ProfilePage/>
         }
       ]
     }
