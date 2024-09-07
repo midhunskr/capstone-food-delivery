@@ -10,5 +10,4 @@ router.route('/all-orders').get(authUser, admin, getAllOrdersAdmin)
 router.route('/:id')
     .get(authUser, getOrderById)
     .delete(authUser, admin, deleteOrder)
-
 export default router

@@ -5,6 +5,7 @@ export const authUser = (req, res, next) => {
         
         //Fetch token
         const {token} = req.cookies
+        
         if(!token){return res.status(400).json({success: false, message: 'Token missing, user not authenticated'})}
 
         //Compare and Decrypt token

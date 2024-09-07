@@ -1,79 +1,76 @@
-import { Menu } from "../models/menuItemModel.js";
+
 import { Order } from "../models/orderModel.js";
 import { Restaurant } from "../models/restaurantModel.js";
 import { User } from "../models/userModel.js";
 
-//Create a new order
 export const createOrder = async (req, res) => {
   try {
-    const {
-      userId,
-      menuItems,
-      restaurantId,
-      deliveryFee,
-      taxRate,
-      deliveryAddress,
-      status,
-    } = req.body;
+    const { menuItems, restaurantId, deliveryFee, taxRate, deliveryAddress, status } = req.body;
+    const userId = req.user.id;
 
-    //Price calculation
+    // Fetch the user's name from database
+    const user = await User.findById(userId).select("name");
+    const userName = user ? user.name : "Unknown User";
+
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: "Restaurant not found" });
+    }
+
+    if (!restaurant.menuItems || restaurant.menuItems.length === 0) {
+      return res.status(400).json({ success: false, message: "The restaurant has no menu items available." });
+    }
+
+    const selectedMenuItems = [];
     let totalPrice = 0;
 
     for (const item of menuItems) {
-      const menuItem = await Menu.findById(item.menuItem)
-      totalPrice += menuItem.price * item.quantity;
-    }
+      const menuItem = restaurant.menuItems.find(m => m._id.equals(item.menuItemId));
+      if (!menuItem) {
+        return res.status(404).json({ success: false, message: `Menu item with ID ${item.menuItemId} not found in restaurant` });
+      }
 
-    //Adding delivery charge
-    if (deliveryFee) {
-      totalPrice += deliveryFee;
-    }
+      console.log(menuItem.name);
+      
 
-    //Adding tax
-    if (taxRate) {
-      totalPrice += totalPrice * taxRate;
-    }
-
-    // Fetch user and restaurant details
-    const userFind = await User.findById(req.user.id);
-    const restaurantFind = await Restaurant.findById(restaurantId);
-
-    //Check user role from request body
-    const userRoleCheck = await User.findById(userId);
-
-    if (userFind.role === "user" && userRoleCheck.role === "user" || userFind.role === "admin" && userRoleCheck.role === "admin") {
-      //Create new order instance
-      const order = new Order({
-        user: userId,
-        restaurant: restaurantId,
-        menuItems,
-        totalPrice,
-        deliveryAddress,
-        status,
-      });
-
-      //Save the order in to DB
-      const createdOrder = await order.save();
-
-      //Success response
-      res.status(201).json({
-        success: true,
-        message: `Order created successfully by '${userFind.name}' for '${restaurantFind.name}'`,
-        order: createdOrder,
-      });
-    } else {
-      res.json({
-        message:
-          "Unable to create order, user Id is not authenticated as 'admin'",
+      const itemTotal = menuItem.price * item.quantity;
+      totalPrice += itemTotal;
+      selectedMenuItems.push({
+        menuItem: menuItem._id,
+        name: menuItem.name,
+        price: menuItem.price,
+        quantity: item.quantity,
+        total: itemTotal
       });
     }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error, failed to create order.",
+
+    totalPrice += deliveryFee || 0;
+    totalPrice += taxRate ? totalPrice * taxRate : 0;
+
+    const order = new Order({
+      user: userId,
+      restaurant: restaurantId,
+      menuItems: selectedMenuItems,
+      totalPrice,
+      deliveryFee,
+      taxRate,
+      deliveryAddress,
+      status
     });
+
+    const createdOrder = await order.save();
+    
+    res.status(201).json({
+      success: true,
+      message: `Order created successfully by '${userName}' for '${restaurant.name}'`,
+      order: createdOrder
+    });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ success: false, message: "Server error, failed to create order." });
   }
 };
+
 
 // Get orders for the logged-in user
 export const getUserOrders = async (req, res) => {

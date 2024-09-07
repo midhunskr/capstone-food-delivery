@@ -52,9 +52,9 @@ export const loginUser = async (req, res) => {
 
         //Error handling for user not exist
         const user = await User.findOne({ email });
-        // if (!user) {
-        //     return res.status(404).json({ success: false, message: 'User does not exists' })
-        // }
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User does not exists' })
+        }
 
         //Compare password
         const passwordMatch = bcrypt.compareSync(password, user.password)
@@ -87,14 +87,15 @@ export const loginUser = async (req, res) => {
 export const userProfile = async (req, res) => {
     
     try {
-        //Destructure 'id' from params
-        const {id} = req.params
-
+        //Destructure 'id' from logged-in user
+        const user = req.user
+        
         //Find user by Id and store the data in userData variable (exclude user password)
-        const userData = await User.findById(id).select("-password")
+        // const userData = await User.findById(user.id).select("-password -phone")
+        const userData = await User.findOne({ _id: user.id }, 'id email name')
 
         //Sucess response
-        res.json({success: true, message: "'" + userData.name + "'" + " accessed as " + "'" + userData.role + "'" + " successfully!", data: userData})
+        res.json(userData)
 
     } catch (error) {
         res.status(error.status || 500).json({message: error.messaage || 'Internal server error'})
@@ -142,8 +143,7 @@ export const checkUser = async (req, res, next) => {
     try {
         //Fetch verified user from 'authMiddleware/authUser'
         const user = req.user
-        const userName = userData.name
-        console.log(userName)
+        // const userName = userData.name
         
     
         //Error handling
@@ -152,9 +152,22 @@ export const checkUser = async (req, res, next) => {
         }
 
         //Sucess response
-        res.json({success: true, message: "'" + user.name + "'" + " verified as " + "'" + user.role + "'"})
+        res.json({success: true, message: "User verified successfully!"})
 
     } catch (error) {
         res.status(error.status || 500).json({message: error.messaage || 'Internal server error'})
     }
 }
+
+// Logout User
+export const logoutUser = async (req, res) => {
+    try {
+        // Clear the authentication token from cookies
+        res.clearCookie('token');
+        
+        // Success response
+        res.status(200).json({ success: true, message: "User logged out successfully!" });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

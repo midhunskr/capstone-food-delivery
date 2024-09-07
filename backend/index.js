@@ -9,7 +9,10 @@ import { connectDB } from './config/db.js'
 const app = express()
 
 //CORS for Authentication
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}))
 //Parsing incoming JSON requests and puts the parsed data in req.body 
 app.use(express.json())
 //Parsing incoming cookie

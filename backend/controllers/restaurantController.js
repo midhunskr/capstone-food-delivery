@@ -1,45 +1,141 @@
-import { Restaurant } from "../models/restaurantModel.js"
+import { Restaurant } from "../models/restaurantModel.js";
+import { cloudinaryInstance } from "../config/cloudinary.js";
 
-//Create a restaurant
+// // Create a restaurant
+// export const createRestaurant = async (req, res) => {
+//     try {
+
+//         const { name, description, location } = req.body;
+//         const menuItems = [];
+
+//         // Iterate through menu items
+//         for (let i = 0; i < 3; i++) {
+//             const itemName = req.body[`menuItems[${i}].name`];
+//             const itemPrice = req.body[`menuItems[${i}].price`];
+//             const itemDescription = req.body[`menuItems[${i}].description`];
+//             const itemImageFile = req.files[`menuItems[${i}].image`]?.[0]; // Access the correct file
+
+//             let uploadedImage = null;
+//             if (itemImageFile) {
+//                 try {
+//                     uploadedImage = await cloudinaryInstance.uploader.upload(itemImageFile.path);
+//                 } catch (error) {
+//                     console.error(`Image upload failed for menu item ${itemName}:`, error);
+//                     return res.status(500).json({ success: false, message: `Image upload failed for menu item ${itemName}` });
+//                 }
+//             }
+            
+
+//             // Add the menu item with the uploaded image URL to the processedMenuItems array
+//             menuItems.push({
+//                 name: itemName,
+//                 price: itemPrice,
+//                 description: itemDescription,
+//                 image: uploadedImage ? uploadedImage.secure_url : '', // Store the Cloudinary image URL
+//             });
+
+//             console.log(menuItems);
+//         }
+        
+
+//         // Create new Restaurant
+//         const restaurant = new Restaurant({
+//             name,
+//             description,
+//             location,
+//             menuItems,
+//             user: req.user._id
+//         });
+
+//         // Save restaurant data
+//         const createdRestaurant = await restaurant.save();
+
+//         // Success response
+//         res.status(201).json({
+//             success: true,
+//             message: `New restaurant '${createdRestaurant.name}' has been created successfully!`,
+//             data: createdRestaurant
+//         });
+
+//     } catch (error) {
+//         // Handle any errors that occur during the process
+//         console.error('Error:', error);
+//         res.status(500).json({
+//             success: false,
+//             message: 'Server Error: Could not create restaurant',
+//             error: error.message
+//         });
+//     }
+// };
+
+// Create a restaurant
 export const createRestaurant = async (req, res) => {
-    
     try {
-        //Import and assign required fields from req.body to variables
-        const { name, description, location} = req.body
+        console.log('Request Body:', req.body);
+        console.log('Request Files:', req.files);
 
-        //error handling for restaurant exist
-        let restaurantExist = await Restaurant.findOne({ name, description, location })
-        if (restaurantExist) {
-            return res.status(400).json({ success: false, message: `Restaurant '${restaurantExist.name}' already exists at '${restaurantExist.location}' with same 'description'!` })
-        }
+        const { name, description, location } = req.body;
 
-        //Create new Restaurant
+        const menuItemKeys = Object.keys(req.body).filter(key => key.startsWith('menuItems'));
+        const menuItemIndices = [...new Set(menuItemKeys.map(key => key.match(/\[(\d+)\]/)[1]))];
+
+        const menuItems = await Promise.all(menuItemIndices.map(async (index) => {
+            const itemName = req.body[`menuItems[${index}].name`];
+            const itemPrice = req.body[`menuItems[${index}].price`];
+            const itemDescription = req.body[`menuItems[${index}].description`];
+            const itemImageFile = req.files[`menuItems[${index}].image`]?.[0];
+
+            if (!itemName || !itemPrice || !itemDescription) {
+                return null; // Skip incomplete items
+            }
+
+            let uploadedImage = null;
+            if (itemImageFile) {
+                try {
+                    uploadedImage = await cloudinaryInstance.uploader.upload(itemImageFile.path);
+                } catch (error) {
+                    throw new Error(`Image upload failed for ${itemName}`);
+                }
+            }
+
+            return {
+                name: itemName,
+                price: itemPrice,
+                description: itemDescription,
+                image: uploadedImage ? uploadedImage.secure_url : '',
+            };
+        }));
+
+        // Filter out null items
+        const validMenuItems = menuItems.filter(item => item !== null);
+
+        // Create the restaurant
         const restaurant = new Restaurant({
             name,
             description,
             location,
+            menuItems: validMenuItems,
             user: req.user._id
-        })
+        });
 
-        //Save restaurant data
-        const createdRestaurant = await restaurant.save()
+        const createdRestaurant = await restaurant.save();
 
-        //Success response
+        // Send the response
         res.status(201).json({
             success: true,
-            message:  "New restaurant " + "'" + createdRestaurant.name + "'" + " has been created successfully!",
+            message: `New restaurant '${createdRestaurant.name}' has been created successfully!`,
             data: createdRestaurant
-        })
-
+        });
     } catch (error) {
-        // Handle any errors that occur during the process
         res.status(500).json({
             success: false,
             message: 'Server Error: Could not create restaurant',
             error: error.message
-        })
+        });
     }
-}
+};
+
+
 
 //Get all restaurant
 export const getRestaurant = async(req, res) =>{
@@ -48,7 +144,7 @@ export const getRestaurant = async(req, res) =>{
 
     //Error handling
     if (restaurants){
-        res.status(404).json({success: true, message: "All restaurants has been listed successfully!", restaurants})
+        res.status(200).json({success: true, message: "All restaurants has been listed successfully!", restaurants})
         
     } else {
         res.status(404).json({success: false, message: 'Restaurant not found'})
@@ -62,7 +158,7 @@ export const getRestaurantById = async (req, res) => {
 
     //Success response
     if (restaurant) {
-        res.status(404).json({success: true, message: "Restaurant '" + restaurant.name + "' listed successfully!", restaurant})
+        res.status(200).json({success: true, message: "Restaurant '" + restaurant.name + "' listed successfully!", restaurant})
         
     //Error handling
     } else {
@@ -70,7 +166,7 @@ export const getRestaurantById = async (req, res) => {
     }
 }
 
-//Update restaurant
+// Update restaurant
 export const updateRestaurant = async (req, res) => {
 
     try {
