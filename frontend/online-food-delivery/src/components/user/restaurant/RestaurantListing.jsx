@@ -79,10 +79,10 @@ export const RestaurantListing = ({ className = "" }) => {
 
   return (
     <>
-      <div className={`self-stretch flex flex-col items-center justify-center py-[0rem] px-[1.25rem] pb-[3rem] box-border max-w-full text-left text-[1.5rem] text-dark font-montserrat ${className}`}>
+      <div className={`self-stretch flex flex-col items-center justify-center py-[0rem] px-[1.25rem] pb-[2rem] box-border max-w-full text-left text-[1.5rem] font-montserrat ${className}`}>
         <div className="h-full w-[70.5rem] flex flex-col items-start justify-start pt-[0rem] px-[0rem] pb-[0rem] box-border gap-[2.012rem] max-w-full mq450:h-auto mq750:gap-[1rem] mq750:pb-[11.688rem] mq750:box-border">
           <div className="self-stretch flex flex-row items-start justify-between py-[0rem] pl-[0.5rem] pr-[0rem] box-border shrink-0 max-w-full gap-[1.25rem] mq450:flex-wrap">
-            <h3 className="m-0 w-[20.75rem] relative text-inherit leading-[121.88%] font-bold font-[inherit] inline-block shrink-0 max-w-full mq450:text-[1.188rem] mq450:leading-[1.438rem]">
+            <h3 className="m-0 w-[20.75rem] relative text-inherit text-dark leading-[121.88%] font-bold font-[inherit] inline-block shrink-0 max-w-full mq450:text-[1.188rem] mq450:leading-[1.438rem]">
               Top Restaurants near by
             </h3>
             <div className="w-[3.688rem] flex flex-col items-start justify-start pt-[0.062rem] px-[0rem] pb-[0rem]">
@@ -135,13 +135,13 @@ export const RestaurantListing = ({ className = "" }) => {
                     </div>
                   </div>
                 </Link>
-                <div className="flex flex-col items-start justify-start gap-[0.75rem] text-black">
+                <div className="flex flex-col items-start justify-start gap-[0.75rem text-dark">
                   <div className="flex flex-row items-start justify-start">
-                    <b className="relative mq450:text-[1.125rem] left-[.5rem]">
+                    <b className="relative mq450:text-[1.125rem] left-[.5rem] ">
                     {item.name.length > 14 ? `${item.name.slice(0, 14)}....` : item.name} {/* Restaurant name */}
                     </b>
                   </div>
-                  <div className="flex flex-row items-start justify-start gap-[0.437rem] text-[0.975rem] text-label-tint">
+                  <div className="flex flex-row items-start justify-start gap-[0.437rem] text-[0.975rem] text-label-tint pt-[.5rem]">
                     <img
                       className="h-[1.45rem] w-[1.519rem] left-[.5rem] relative object-cover min-h-[1.438rem]"
                       loading="lazy"
@@ -161,7 +161,6 @@ export const RestaurantListing = ({ className = "" }) => {
           </div>
         </div>
       </div>
-
     </>
   );
 };
