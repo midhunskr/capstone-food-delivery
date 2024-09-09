@@ -29,10 +29,7 @@ export const createOrder = async (req, res) => {
       if (!menuItem) {
         return res.status(404).json({ success: false, message: `Menu item with ID ${item.menuItemId} not found in restaurant` });
       }
-
-      console.log(menuItem.name);
       
-
       const itemTotal = menuItem.price * item.quantity;
       totalPrice += itemTotal;
       selectedMenuItems.push({
