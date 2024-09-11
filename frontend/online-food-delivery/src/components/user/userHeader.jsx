@@ -142,7 +142,7 @@ export const UserHeader = ({ className = "" }) => {
             />
           </div>
           <a
-            className="[text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[2.813rem] whitespace-nowrap text-dark"
+            className="cartIcon [text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[2.813rem] whitespace-nowrap text-dark"
           >
             Cart
           </a>

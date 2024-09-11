@@ -1,6 +1,11 @@
+import PropTypes from "prop-types"
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../../../config/axioInstance";
+import { useSelector, useDispatch } from 'react-redux'
+import { decrement, increment } from "../../../../redux/features/counterSlice";
+import { addItemToCart, removeItemFromCart, updateItemQuantity } from "../../../../redux/features/cartSlice";
+import Modal from './Modal'
 
 export const RestaurantHeader = ({ className = "" }) => {
 
@@ -15,9 +20,16 @@ export const RestaurantHeader = ({ className = "" }) => {
 
   const [scrollPosition, setScrollPosition] = useState(0)
   const [buttonColor, setButtonColor] = useState({ left: '#CACACA', right: '#CACACA' })
-
   const containerRef = useRef();
+  const { id } = useParams() // Extract restaurant ID from URL
+  const [restaurant, setRestaurant] = useState({}) //Setting State for Restaurant Fetcher
+  const [quantityItems, setQuantityItems] = useState({});
+  const itemsQuantity = useSelector((state) => state.counter.items) //Counter Redux
+  const cartItems = useSelector((state) => state.cart.items) //Cart redux
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  //Scroller
   const handleScroll = (scrollAmount) => {
     const container = containerRef.current;
 
@@ -35,22 +47,20 @@ export const RestaurantHeader = ({ className = "" }) => {
     container.scrollLeft = newScrollPosition;
   };
 
+  //Scroll button
   useEffect(() => {
-    const container = containerRef.current;
-
-    // Check if the scroll position is at the left or right limit
-    const atLeftLimit = container.scrollLeft === 0;
-    const atRightLimit = container.scrollLeft === container.scrollWidth - container.clientWidth;
-
-    setButtonColor({
-      left: atLeftLimit ? '#E0E0E0' : '#CACACA',
-      right: atRightLimit ? '#E0E0E0' : '#CACACA',
-    });
+    if (containerRef.current) {  // Check if containerRef is not null
+      const container = containerRef.current;
+      const atLeftLimit = container.scrollLeft === 0;
+      const atRightLimit = container.scrollLeft === container.scrollWidth - container.clientWidth;
+      setButtonColor({
+        left: atLeftLimit ? '#E0E0E0' : '#CACACA',
+        right: atRightLimit ? '#E0E0E0' : '#CACACA',
+      });
+    }
   }, [scrollPosition]);
 
-  const { id } = useParams() // Extract restaurant ID from URL
-  const [restaurant, setRestaurant] = useState({}) //Setting State for Restaurant Fetcher
-
+  //Fetch backend data
   const fetchRestaurant = async () => {
     try {
       const response = await axiosInstance({
@@ -78,9 +88,24 @@ export const RestaurantHeader = ({ className = "" }) => {
   }, [id]);
 
   console.log(restaurant.menuItems);
-
   //
-  const [quantityItems, setQuantityItems] = useState({});
+  
+
+  //Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
+
+  // Function to open modal
+  const openModal = () => {
+    setIsModalOpen(true);
+    modalRef.current.open();
+  };
+
+  // Function to close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    modalRef.current.close();
+  };
 
   // Function to handle button click and show quantity selector
   const handleButtonClick = (itemId) => {
@@ -88,6 +113,9 @@ export const RestaurantHeader = ({ className = "" }) => {
       ...prevState,
       [itemId]: true,
     }));
+
+    // Add item to cart with initial quantity of 1
+    dispatch(addItemToCart({ item, quantity: 1 }));
   };
 
   return (
@@ -292,16 +320,36 @@ export const RestaurantHeader = ({ className = "" }) => {
                           {/* Button or Quantity Section */}
                           {!quantityItems[item._id] ? (
                             <button
-                              onClick={() => handleButtonClick(item._id)}
-                              className="absolute top-[11.5rem] w-[9rem] h-[3rem] text-mid font-bold bg-bg-white text-tradewind border-[.3rem] border-solid border-white px-3 py-1 rounded-xl shadow-lg z-2"
+                              onClick={() => { handleButtonClick(item._id) }}
+                              className="`addToCartButton absolute top-[11.5rem] w-[9rem] h-[3rem] text-mid font-bold bg-bg-white text-tradewind border-[.3rem] border-solid border-white px-3 py-1 rounded-xl shadow-lg z-2 cursor-pointer`"
                             >
                               <b>Add to Cart</b>
                             </button>
                           ) : (
-                            <div className="absolute bottom-2 right-2 flex items-center gap-2">
-                              <button className="bg-gray-200 px-2 py-1 rounded-lg">-</button>
-                              <span className="font-bold">1</span>
-                              <button className="bg-gray-200 px-2 py-1 rounded-lg">+</button>
+                            <div className="absolute top-[11.5rem] w-[9rem] h-[3rem] flex items-center px-[1rem] justify-between text-tradewind text-mid font-bold gap-2 bg-bg-white border-[.3rem] border-solid border-white rounded-xl shadow-lg cursor-pointer">
+                              <button onClick={() => dispatch(decrement(item._id))} className="bg-white px-2 py-1 rounded-md border-[.1rem] border-solid border-disabled-tint text-tradewind cursor-pointer">-</button>
+                              <span className="font-bold">{itemsQuantity[item._id] || item.quantity}</span>
+                              <button onClick={() => dispatch(increment(item._id))} className="bg-white px-2 py-1 rounded-md border-[.1rem] border-solid border-disabled-tint text-tradewind cursor-pointer">+</button>
+                            </div>
+                          )}
+                          {/* Modal Component */}
+                          <Modal ref={modalRef} title="Item Added to Cart">
+                            <p>Your item has been added to the cart.</p>
+                            <button className="btn" onClick={() => navigate('/cart')}>
+                              View Cart
+                            </button>
+                          </Modal>
+
+                          {/* Sticky 'View Cart' Button */}
+                          {Object.keys(itemsQuantity).length > 0 && (
+                            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+                              <button
+                                onClick={() => navigate('/user/checkout')}
+                                className="bg-tradewind text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 cursor-pointer cartButton"
+                              >
+                                
+                                View Cart ({Object.values(itemsQuantity).reduce((a, b) => a + b, 0)})
+                              </button>
                             </div>
                           )}
                         </div>
@@ -312,12 +360,12 @@ export const RestaurantHeader = ({ className = "" }) => {
               );
             })}
           </div>
-
-
-
-
         </div>
       </div>
     </div>
   )
+}
+
+RestaurantHeader.propTypes = {
+  className: PropTypes.string,
 }

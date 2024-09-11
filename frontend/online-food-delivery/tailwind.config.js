@@ -15,6 +15,7 @@ export default {
         "label-tint": "#808080",
         "item-tint": "#484848",
         "selection-tint": "#cacaca",
+        "disabled-tint": "#E0E0E0",
         black: "#000",
         white: "#fff",
         dark: "#2b2b2b",

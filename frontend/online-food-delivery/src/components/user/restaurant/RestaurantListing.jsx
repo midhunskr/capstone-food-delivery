@@ -76,6 +76,7 @@ export const RestaurantListing = ({ className = "" }) => {
       right: atRightLimit ? '#E0E0E0' : '#CACACA',
     });
   }, [scrollPosition]);
+  
 
   return (
     <>
