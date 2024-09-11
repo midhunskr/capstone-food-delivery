@@ -13,6 +13,7 @@ export const createOrder = async (req, res) => {
     const userName = user ? user.name : "Unknown User";
 
     const restaurant = await Restaurant.findById(restaurantId);
+      
     if (!restaurant) {
       return res.status(404).json({ success: false, message: "Restaurant not found" });
     }
@@ -28,7 +29,7 @@ export const createOrder = async (req, res) => {
       const menuItem = restaurant.menuItems.find(m => m._id.equals(item.menuItemId));
       if (!menuItem) {
         return res.status(404).json({ success: false, message: `Menu item with ID ${item.menuItemId} not found in restaurant` });
-      }
+      }      
       
       const itemTotal = menuItem.price * item.quantity;
       totalPrice += itemTotal;
@@ -36,6 +37,8 @@ export const createOrder = async (req, res) => {
         menuItem: menuItem._id,
         name: menuItem.name,
         price: menuItem.price,
+        image: menuItem.image,
+        veg: menuItem.veg,
         quantity: item.quantity,
         total: itemTotal
       });
@@ -46,7 +49,11 @@ export const createOrder = async (req, res) => {
 
     const order = new Order({
       user: userId,
-      restaurant: restaurantId,
+      restaurant: {
+        id: restaurant._id,
+        name: restaurant.name,
+        location: restaurant.location
+      },
       menuItems: selectedMenuItems,
       totalPrice,
       deliveryFee,
@@ -55,12 +62,16 @@ export const createOrder = async (req, res) => {
       status
     });
 
+    console.log(order);
+    
+
     const createdOrder = await order.save();
     
     res.status(201).json({
       success: true,
       message: `Order created successfully by '${userName}' for '${restaurant.name}'`,
-      order: createdOrder
+      order: createdOrder,
+      location: restaurant.location
     });
   } catch (error) {
     console.error("Error creating order:", error);
@@ -68,14 +79,16 @@ export const createOrder = async (req, res) => {
   }
 };
 
-
-// Get orders for the logged-in user
 export const getUserOrders = async (req, res) => {
   try {
-
-    // Find orders where the 'user' field matches the ID of the logged-in user
-    const orders = await Order.find({ user: req.user.id }).populate('restaurant', 'name')
-    
+    // Find orders for the logged-in user and populate restaurant, user, and menu items (with name, price, and image)
+    const orders = await Order.find({ user: req.user.id })
+      .populate('restaurant', 'name') // Populate restaurant name
+      .populate({
+        path: 'menuItems.menuItem', // Populate menu items within the order
+        select: 'name price image'  // Ensure only relevant fields are fetched from the Menu model
+      })
+      .populate("user", "name email"); // Populate user data
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ success: false, message: 'No orders found for this user.' });
@@ -91,13 +104,14 @@ export const getUserOrders = async (req, res) => {
   }
 };
 
+
 // Get all orders (Admin access only)
 export const getAllOrdersAdmin = async (req, res) => {
   try {
     // Fetch all orders, populating user and restaurant details
     const orders = await Order.find()
       .populate("user", "name email")
-      .populate("restaurant", "name location");
+      .populate("restaurant", "name location")
 
     res.status(200).json({
       success: true,
