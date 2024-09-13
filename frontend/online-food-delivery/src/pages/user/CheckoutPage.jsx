@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { AddressSection } from "../../components/user/cart/AddressSection";
-import { PaymentDetails } from "../../components/user/cart/PaymentDetails";
 import { ProceedToPayment } from "../../components/user/cart/ProceedToPayment";
+import { PaymentDetails } from "../../components/user/cart/PaymentDetails";
 
 export const CheckoutPage = ({ className = '' }) => {
     return (
@@ -20,7 +20,7 @@ export const CheckoutPage = ({ className = '' }) => {
                 <div className="h-full w-[70.5rem] flex flex-col   box-border gap-[2.012rem] max-w-full mq450:h-auto mq750:g[1rem] mq750:pb-[11.688rem] mq750:box-border">
                     <div className="self-stretch flex flex-col   pl-[0.5rem] pr-[0rem] box-border shrink-0 max-w-full mq450:flex-wrap">
                         <div className="flex flex-row w-12/12 justify-between pb-[4rem]">
-                            <div className="flex w-7/12 flex-col bg-bg-white text-dark gap-[3rem]">
+                            <div className="flex w-6/12 flex-col bg-bg-white text-dark gap-[3rem]">
                                 <AddressSection />
                                 {/* <ProceedToPayment /> */}
                             </div>
