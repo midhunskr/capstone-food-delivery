@@ -70,7 +70,9 @@ export const getMenuItems = async (req, res) => {
 //Get menu item by Id
 export const menuItemById = async (req, res) => {
     try {
-        const itemById = await Menu.findById(req.params.id)
+        const itemById = await Restaurant.findById(req.params.id)
+        console.log(itemById);
+        
         res.status(201).json({success: true, message: itemById.name +  ' data received successfully', itemById})
 
     } catch (error) {

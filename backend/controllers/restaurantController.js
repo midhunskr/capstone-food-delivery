@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { Restaurant } from "../models/restaurantModel.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
 
@@ -5,7 +6,6 @@ import { cloudinaryInstance } from "../config/cloudinary.js";
 export const createRestaurant = async (req, res) => {
     try {
       const { name, description, location } = req.body;
-      
   
       const menuItemKeys = Object.keys(req.body).filter(key => key.startsWith('menuItems'));
       const menuItemIndices = [...new Set(menuItemKeys.map(key => key.match(/\[(\d+)\]/)[1]))];
@@ -40,6 +40,8 @@ export const createRestaurant = async (req, res) => {
           recommended: itemRecommended, // New field for recommended
           category: itemCategory, // New field for category
           image: uploadedImage ? uploadedImage.secure_url : '',
+          restaurantName: name, // Include restaurant name
+          restaurantLocation: location
         };
       }));
         
@@ -72,8 +74,6 @@ export const createRestaurant = async (req, res) => {
     }
 };
 
-
-
 //Get all restaurant
 export const getRestaurant = async(req, res) =>{
     //Find restaurants and save to variable 'restaurants' and replace with populate('user, 'name') from Restaurant schema
@@ -93,29 +93,39 @@ export const getRestaurantById = async (req, res) => {
     //Find restaurant by Id and save to variable 'restaurants' and replace with populate('user, 'name') from Restaurant schema
     const restaurant = await Restaurant.findById(req.params.id).populate('user', 'name')
 
-    //Success response
     if (restaurant) {
         res.status(200).json({success: true, message: "Restaurant '" + restaurant.name + "' listed successfully!", restaurant})
         
-    //Error handling
     } else {
         res.status(404).json({success: false, message: 'Restaurant not found' })
     }
 }
 
-// Update restaurant
-// export const updateRestaurant = async (req, res) => {
+export const getRestaurantByMenuItem = async (req, res) => {
+  const { id } = req.body;
 
-//     try {
-//         const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {new: true})
-//         res.status(201).json({success: true, message: "Restaurant '" + restaurant.name + "' updated successfully!", restaurant})
+  try {
+    // Find all restaurants
+    const allRestaurants = await Restaurant.find(); // Fetch all restaurants
 
-//     } catch (error) {
-//         res.status(404).json({ success: false, message: 'Restaurant not found' })
-//     } 
-// }
+    // Filter restaurants based on id
+    const restaurant = allRestaurants.find(restaurant =>
+      restaurant.menuItems.some(item => item._id.toString() === id)
+    );
 
-// Update a restaurant
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(200).json(restaurant); 
+  } catch (error) {
+    console.error("Error finding restaurant by menu item:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+//Update restaurant
 export const updateRestaurant = async (req, res) => {
   try {
       const { id } = req.params;

@@ -5,10 +5,12 @@ const menuItemSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     description: { type: String },
     available: { type: Boolean, default: true },
-    veg: { type: Boolean, default: true },        // New field for veg
-    recommended: { type: Boolean, default: true }, // New field for recommended
-    category: { type: String },                     // New field for category
-    image: { type: String }
+    veg: { type: Boolean, default: true },
+    recommended: { type: Boolean, default: true },
+    category: { type: String },     
+    image: { type: String },
+    restaurantName: {type: String},
+    restaurantLocation: {type: String},
 });
 
 const restaurantSchema = new mongoose.Schema({
