@@ -87,25 +87,38 @@ const cartSlice = createSlice({
       const itemId = action.payload;
       state.cartItems = state.cartItems.filter(cartItem => cartItem._id !== itemId);
     },
+    // increment: (state, action) => {
+    //   const itemId = action.payload;
+    //   const item = state.cartItems.find((item) => item._id === itemId);
+    //   if (item) {
+    //     item.quantity += 1;
+    //   }
+    // },
     increment: (state, action) => {
       const itemId = action.payload;
-      const item = state.cartItems.find((item) => item._id === itemId);
-      if (item) {
-        item.quantity += 1;
-      }
+    
+      // Use map to create a new array with the updated quantity
+      state.cartItems = state.cartItems.map(item => 
+        item._id === itemId 
+          ? { ...item, quantity: item.quantity + 1 } 
+          : item
+      );
     },
     decrement: (state, action) => {
       const itemId = action.payload;
-      const item = state.cartItems.find((item) => item._id === itemId);
-      if (item) {
-        if (item.quantity > 1) {
-          item.quantity -= 1;
-        } else {
-          state.cartItems = state.cartItems.filter((item) => item._id !== itemId);
-        }
-      }
-      
-    },
+    
+      // First, map over the cart items and decrement the correct item's quantity
+      state.cartItems = state.cartItems.map(item => 
+        item._id === itemId && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }  // Decrement if quantity > 1
+          : item
+      );
+    
+      // Then, filter out items with quantity <= 1
+      state.cartItems = state.cartItems.filter(item => item.quantity > 0);
+    
+      console.log("Updated cart items after decrement:", state.cartItems);
+    },            
   },
 })
 

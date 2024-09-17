@@ -435,7 +435,7 @@ export const RestaurantHeader = ({ className = "" }) => {
   const { id } = useParams() // Extract restaurant ID from URL
   const [restaurant, setRestaurant] = useState({}) //Setting State for Restaurant Fetcher
   const [quantityItems, setQuantityItems] = useState({});
-  const itemsQuantity = useSelector((state) => state.cart.cartItems) //Counter Redux
+  const cartItems = useSelector((state) => state.cart.cartItems) //Counter Redux
 
 
   const dispatch = useDispatch()
@@ -506,13 +506,27 @@ export const RestaurantHeader = ({ className = "" }) => {
 
     setQuantityItems((prevState) => ({
       ...prevState,
-      [item._id]: { ...item, quantity: 0 },
+      [item._id]: { ...item, quantity: 1 },
     }));
 
     dispatch(addToCart(item))
 
   };
 
+  //Handle duplicate item names
+  const groupedItems = cartItems.reduce((acc, item) => {
+    const existingItem = acc.find(i => i.name === item.name);
+
+    if (existingItem) {
+        // If an item with the same name exists, increment its quantity
+        existingItem.quantity += 1;
+    } else {
+        // Otherwise, add the item to the accumulator with a quantity of 1
+        acc.push({ ...item, quantity: 1 });
+    }
+
+    return acc;
+}, []);
 
 
   return (
@@ -706,7 +720,7 @@ export const RestaurantHeader = ({ className = "" }) => {
                         </div>
 
                         {/* Right Background Image Section with Button */}
-                        <div className="flex flex-col items-center justify-end relative w-[14rem] h-[14rem] rounded-3xl overflow-visible  shadow-lg z-1"
+                        <div className="flex flex-col items-center justify-end relative w-[14rem] h-[14rem] rounded-3xl overflow-visible  shadow-md z-1"
                           style={{
                             border: "10px solid white",
                             backgroundImage: `url(${item.image})`,
@@ -716,10 +730,10 @@ export const RestaurantHeader = ({ className = "" }) => {
                           }}>
                            
                           {/* Button or Quantity Section */}
-                          {!itemsQuantity.find((i) => i._id === item._id) ? (
+                          {!groupedItems.find((i) => i._id === item._id) ? (
                             <button
                               onClick={() => handleAddToCart(item)}
-                              className="addToCartButton absolute top-[11.5rem] w-[9rem] h-[3rem] text-mid font-bold bg-bg-white text-tradewind border-[.3rem] border-solid border-white px-3 py-1 rounded-xl shadow-lg z-2 cursor-pointer"
+                              className="addToCartButton absolute top-[11.5rem] w-[9rem] h-[3rem] text-mid font-bold bg-bg-white text-tradewind border-[.3rem] border-solid border-white px-3 py-1 rounded-xl shadow-md z-2 cursor-pointer"
                             >
                               <b>Add to Cart</b>
                             </button>
@@ -727,21 +741,7 @@ export const RestaurantHeader = ({ className = "" }) => {
                             <div className="absolute top-[11.5rem] w-[9rem] h-[3rem] flex items-center px-[1rem] justify-between text-tradewind text-mid font-bold gap-2 bg-bg-white border-[.3rem] border-solid border-white rounded-xl shadow-lg cursor-pointer">
                               <button
                                 onClick={() => {
-                                  const updatedItems = itemsQuantity.map((i) => {
-                                    if (i._id === item._id) {
-                                      dispatch(decrement(i._id))
-                                      if (i.quantity <= 0) {
-                                        dispatch(removeItemFromCart(i._id)); // Remove item from Redux state
-                                        return null; // Remove item from local state
-                                      } else {
-                                        dispatch(decrement(i._id)); // Decrement item in Redux state
-                                        return { ...i, quantity: i.quantity - 1 }; // Update local state
-                                      }
-                                    }
-                                    return i;
-                                  }).filter((i) => i !== null);
-
-                                  setQuantityItems(updatedItems); // Update local state
+                                  dispatch(decrement(item._id));
                                 }}
                                 className="decrementButton bg-white px-2 py-1 rounded-md border-[.1rem] border-solid border-disabled-tint text-tradewind cursor-pointer"
                               >
@@ -749,10 +749,8 @@ export const RestaurantHeader = ({ className = "" }) => {
                               </button>
 
                               <span className="quantityValue font-bold">
-                                {
-                                  itemsQuantity.find(cartItem => cartItem._id === item._id)?.quantity || 1
-                                }
-                                {console.log(itemsQuantity)
+                                {groupedItems.find(cartItem => cartItem._id === item._id)?.quantity || 1}
+                                {console.log(groupedItems)
                                 }
                               </span>
 
@@ -760,15 +758,6 @@ export const RestaurantHeader = ({ className = "" }) => {
                                 onClick={() => {
                                   handleAddToCart(item); // Ensure this function is called
                                   dispatch(increment(item._id));
-                                  
-                                  setQuantityItems((prevState) => {
-                                    // Ensure prevState is always an array
-                                    const validState = Array.isArray(prevState) ? prevState : [];
-                              
-                                    return validState.map(i => 
-                                      i._id === item._id ? { ...i, quantity: (i.quantity || 0) + 1 } : i
-                                    );
-                                  });
                                 }}
                                 className="incrementButton bg-white px-2 py-1 rounded-md border-[.1rem] border-solid border-disabled-tint text-tradewind cursor-pointer"
                               >
@@ -778,12 +767,12 @@ export const RestaurantHeader = ({ className = "" }) => {
                           )}
 
                           {/* Sticky 'View Cart' Button */}
-                          {itemsQuantity.length > 0 && (
+                          {groupedItems.length > 0 && (
                             <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
                               <button
                                 onClick={() => {
                                   // Ensure all items have valid properties
-                                  const validItems = itemsQuantity.every(
+                                  const validItems = groupedItems.every(
                                     (item) => item._id && item.name && item.price
                                   );
                                   if (validItems) {
@@ -794,7 +783,7 @@ export const RestaurantHeader = ({ className = "" }) => {
                                 }}
                                 className="bg-tradewind text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 cursor-pointer cartButton"
                               >
-                                View Cart ({itemsQuantity.length})
+                                View Cart ({groupedItems.reduce((a, b) => a + b.quantity, 0)})
                                 
                               </button>
                             </div>

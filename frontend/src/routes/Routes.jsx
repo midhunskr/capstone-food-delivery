@@ -60,6 +60,14 @@ export const router = createBrowserRouter([
           element: <CheckoutPage/>
         },
         {
+          path: "checkout/success",
+          element: <h1>Payment Success</h1>
+        },
+        {
+          path: "checkout/cancel",
+          element: <h1>Payment Cancelled</h1>
+        },
+        {
           path: "test",
           element: <ReduxTest/>
         }
