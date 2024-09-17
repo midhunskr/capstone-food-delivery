@@ -1,50 +1,160 @@
-import { Order } from "../models/orderModel.js";
-import { Payment } from "../models/paymentModel.js";
-import { Restaurant } from "../models/restaurantModel.js";
-import { User } from "../models/userModel.js";
+// import Stripe from 'stripe'
 
-//Create a payment
-export const createPayment = async (req, res) => {
-  try {
-    const { orderId, paymentMethod, total, status } = req.body;
+// //Create a payment
+// export const createPayment = async (req, res) => {
+//   try {
 
-    //Find order Id
-    const order = await Order.findById(orderId);
+//     const stripe = new Stripe(process.env.Stripe_Private_Api_Key);
 
-    //Error handling for order not found
-    if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found." });
-    }
-
-    //Fetch menu items, restaurant and user details
-    const menu = await Order.findById(orderId).populate("menuItems.menuItem");
-    const restaurant = await Restaurant.findById(menu.restaurant);
-    const user = await User.findById(menu.user);
-
-    //New payment instance
-    const payment = new Payment({
-      order: orderId,
-      total: menu.totalPrice,
-      paymentMethod,
-      status,
-    });
-
-    // Save payment to DB
-    const createdPayment = await payment.save();
+//     const {itemsQuantity} = req.body
+//     console.log("=======quantity", itemsQuantity);
     
 
-    //Success response
-    res.status(201).json({
-      success: true,
-      message: `Payment successfully done by '${user.name}' for '${restaurant.name}'`,
-      payment: createdPayment,
+//     const lineItems = itemsQuantity.map((item)=> ({
+//       price_data: {
+//         currency: "inr",
+//         item_data: {
+//           name: item.name,
+//           images: [item.image],
+//         },
+//         unit_amount: Math.round(item.price * 100)
+//       },
+//       quantity: item.quantity,
+//     }))
+
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       line_items: lineItems,
+//       mode: 'payment',
+//       success_url: `${CLIENT_DOMAIN}/user/payment/success`,
+//       cancel_url: `${CLIENT_DOMAIN}/user/payment/cancel`,
+//     })
+
+//     res.json({ success: true, sessionId: session.id })
+
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error, payment unsuccessfull.",
+//     });
+//   }
+// };
+
+
+import Stripe from 'stripe';
+
+// Create a payment
+export const createPayment = async (req, res) => {
+  try {
+    const stripe = new Stripe(process.env.Stripe_Private_Api_Key);
+
+    const { menuItems, totalPrice, deliveryFee, taxRate, grandTotal, customerName, customerAddress } = req.body; // Destructure orderData
+    console.log("=======orderData", grandTotal);
+
+    // Group menuItems by _id and sum quantities
+    const groupedMenuItems = menuItems.reduce((acc, item) => {
+      const existingItem = acc.find(i => i._id === item._id);
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+      } else {
+        acc.push({ ...item });
+      }
+      return acc;
+    }, []);
+
+    const lineItems = groupedMenuItems.map((item) => ({
+      price_data: {
+        currency: "INR",
+        product_data: { // Use product_data instead of item_data
+          name: item.name,
+          images: [item.image], // Access the images array directly
+        },
+        unit_amount: Math.round(item.price * 100),
+      },
+      quantity: item.quantity,
+    }));
+    
+    // Add delivery fee and tax as separate line items if needed
+    if (totalPrice > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "INR",
+          product_data: {
+            name: "Total Price",
+          },
+          unit_amount: Math.round(totalPrice * 100),
+        },
+        quantity: 1,
+      });
+    }
+    
+
+    // Add delivery fee and tax as separate line items if needed
+    if (deliveryFee > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "INR",
+          product_data: {
+            name: "Delivery Fee",
+          },
+          unit_amount: Math.round(deliveryFee * 100),
+        },
+        quantity: 1,
+      });
+    }
+
+    if (taxRate > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "INR",
+          product_data: {
+            name: "GST & Restaurant Charges",
+          },
+          unit_amount: Math.round(taxRate * 100),
+        },
+        quantity: 1,
+      });
+    }
+
+    if (grandTotal > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "INR",
+          product_data: {
+            name: "Amount to Pay",
+          },
+          unit_amount: Math.round(grandTotal * 100),
+        },
+        quantity: 1,
+      });
+    }
+    console.log("grandTotal==========", grandTotal);
+    
+
+    console.log("lineItems===========", lineItems);
+    
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: 'payment',
+      customer_details: { 
+        name: customerName,
+        address: customerAddress
+      },
+      success_url: `${process.env.CLIENT_DOMAIN}/user/checkout/success`,
+      cancel_url: `${process.env.CLIENT_DOMAIN}/user/checkout/cancel`,
     });
+
+    console.log("route hit=====", session);
+
+    res.json({ success: true, sessionId: session.id });
+
   } catch (error) {
+    console.error("Error creating Stripe Checkout session:", error)
     res.status(500).json({
       success: false,
-      message: "Server error, payment unsuccessfull.",
+      message: "Server error, payment unsuccessful.",
     });
   }
 };
