@@ -1,4 +1,3 @@
-import axios from "axios"
 import toast from "react-hot-toast"
 import { axiosInstance } from "../config/axioInstance"
 
