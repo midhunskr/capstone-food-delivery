@@ -10,7 +10,7 @@ const app = express()
 
 //CORS for Authentication
 app.use(cors({
-  origin: 'https://chewse-food-delivery.vercel.app',
+  origin: 'https://chewse-food-delivery.vercel.app/',
   credentials: true
 }))
 
