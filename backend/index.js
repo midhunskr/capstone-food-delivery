@@ -27,15 +27,6 @@ app.use((req, res, next) => {
 });
 
 
-//Unsafe-inline
-app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy', 
-    "style-src 'self' 'unsafe-inline';" // Add 'unsafe-inline'
-  );
-  next();
-});
-
 //Parsing incoming JSON requests and puts the parsed data in req.body 
 app.use(express.json())
 //Parsing incoming cookie
