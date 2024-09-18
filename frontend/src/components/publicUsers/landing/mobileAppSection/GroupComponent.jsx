@@ -7,7 +7,7 @@ export const GroupComponent = ({
 }) => {
   return (
     <div
-      className={`flex-1 shadow-[0px_19px_40.6px_-24px_rgba(0,_0,_0,_0.66)] rounded-mini bg-bg-white flex flex-row items-end justify-start p-[1.062rem] box-border gap-[1.125rem] min-w-[6.813rem] z-[1] text-center text-[1.038rem] text-dark font-quicksand ${className}`}
+      className={`shadow-[0px_19px_40.6px_-24px_rgba(0,_0,_0,_0.66)] rounded-mini bg-bg-white flex flex-row items-end justify-start p-[1.062rem] box-border gap-[1.125rem] min-w-[6.813rem] z-[1] text-center text-[1.038rem] text-dark font-quicksand ${className}`}
     >
       <div className="h-[4.75rem] w-[10.438rem] relative shadow-[0px_19px_40.6px_-24px_rgba(0,_0,_0,_0.66)] rounded-mini bg-bg-white hidden" />
       <img

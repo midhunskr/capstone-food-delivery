@@ -4,10 +4,11 @@ import 'boxicons';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { userLogin } from '../../../../services/userApi';
+import { userLogin, userSignUp } from '../../../../services/userApi';
 
 export const LoginForm = () => {
   const [isRegistering, setIsRegistering] = useState(false);
+  const navigate = useNavigate();
 
   const handleRegisterClick = () => {
     setIsRegistering(true);
@@ -16,108 +17,136 @@ export const LoginForm = () => {
   const handleLoginClick = () => {
     setIsRegistering(false);
   };
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
-  const navigate = useNavigate()
+  // Separate useForm instances for login and signup
+  const loginForm = useForm();
+  const signupForm = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmitLogin = async (data) => {
     try {
-      const response = await userLogin(data)
+      const response = await userLogin(data);
       console.log(response);
-      
-      
+
       if (response.success) {
         toast.success('Welcome back!');
-        navigate('/user');     
+        navigate('/user');
       } else {
-        // Handle the case where the login is not successful, even if there's no error
         toast.error('Login failed. Please check your credentials.');
       }
     } catch (error) {
       toast.error('Login failed. Something went wrong.');
-      console.log(error);  
-    }  
-  }
+      console.log(error);
+    }
+  };
+
+  const onSubmitRegister = async (data) => {
+    try {
+      const response = await userSignUp(data);
+      console.log(response);
+
+      if (response.success) {
+        toast.success('Welcome to Chewse!');
+        navigate('/user');
+      } else {
+        toast.error('Signup failed. Please check your credentials.');
+      }
+    } catch (error) {
+      toast.error('Signup failed. Something went wrong.');
+      console.log(error);
+    }
+  };
 
   return (
     <div className="container">
-      <div className={`Form login-form ${isRegistering ? 'active' : ''}`}>
-        <h2>Login</h2>
-        <form action="#" onSubmit={handleSubmit(onSubmit)}>
-          <div className="input-box">
-            <i className='bx bxs-envelope'></i>
-            <label htmlFor="#">Email</label>
-            <input type="email" {...register("email")} placeholder="Enter Your Email*" />
-          </div>
-          <div className="input-box">
-            <i className='bx bxs-lock-alt'></i>
-            <input type="password" {...register("password")} placeholder="Enter Your Password*" />
-            <label htmlFor="#">Password</label>
-          </div>
-          <div className="forgot-section">
-            <span>
-              <input type="checkbox" name="" id="checked" /> Remember Me
-            </span>
-            <span>
-              <a href="#">Forgot Password?</a>
-            </span>
-          </div>
-          <button type="submit" className="btn">Login</button>
-        </form>
-        <p>Or Sign up using</p>
-        <div className="social-media">
-          <i className='bx bxl-facebook'></i>
-          <i className='bx bxl-google'></i>
-          <i className='bx bxl-twitter'></i>
+      {!isRegistering ? (
+        <div className="Form login-form">
+          <form onSubmit={loginForm.handleSubmit(onSubmitLogin)}>
+            <div className="input-box">
+              <i className="bx bxs-envelope"></i>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                {...loginForm.register("email", { required: "Email is required" })}
+                placeholder="Enter Your Email*"
+              />
+              {loginForm.formState.errors.email && <p>{loginForm.formState.errors.email.message}</p>}
+            </div>
+            <div className="input-box">
+              <i className="bx bxs-lock-alt"></i>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                {...loginForm.register("password", { required: "Password is required" })}
+                placeholder="Enter Your Password*"
+              />
+              {loginForm.formState.errors.password && <p>{loginForm.formState.errors.password.message}</p>}
+            </div>
+            <div className="forgot-section">
+              <span>
+                <input type="checkbox" /> Remember Me
+              </span>
+              <span>
+                <a href="#">Forgot Password?</a>
+              </span>
+            </div>
+            <div className="flex items-center justify-center pt-[2rem]">
+              <button type="submit" className="px-[2rem] py-[.5rem] rounded-lg bg-tradewind text-lg">Login</button>
+            </div>
+          </form>
+          <p className="RegisterBtn" onClick={handleRegisterClick}>
+            <a href="#">Register Now</a>
+          </p>
         </div>
-        <p className="RegisteBtn RegiBtn" onClick={handleRegisterClick}>
-          <a href="#">Register Now</a>
-        </p>
-      </div>
-
-      <div className={`Form Register-form ${isRegistering ? 'active' : ''}`}>
-        <h2>Register</h2>
-        <form action="#">
-          <div className="input-box">
-            <i className='bx bxs-envelope'></i>
-            <label htmlFor="#">Username</label>
-            <input type="text" placeholder="Enter Your Username*" />
-          </div>
-          <div className="input-box">
-            <i className='bx bxs-lock-alt'></i>
-            <input type="password" placeholder="Enter Your Password*" />
-            <label htmlFor="#">Password</label>
-          </div>
-          <div className="input-box">
-            <i className='bx bxs-lock-alt'></i>
-            <input type="password" placeholder="Confirm Your Password*" />
-            <label htmlFor="#">Confirm Password</label>
-          </div>
-          <div className="forgot-section">
-            <span>
-              <input type="checkbox" name="" id="checked" /> Remember Me
-            </span>
-            <span>
-              <a href="#">Forgot Password?</a>
-            </span>
-          </div>
-          <button className="btn">Register</button>
-        </form>
-        <p>Or Sign up using</p>
-        <div className="social-media">
-          <i className='bx bxl-facebook'></i>
-          <i className='bx bxl-google'></i>
-          <i className='bx bxl-twitter'></i>
+      ) : (
+        <div className="Form register-form">
+          <form onSubmit={signupForm.handleSubmit(onSubmitRegister)}>
+            <div className="input-box">
+              <i className="bx bxs-envelope"></i>
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                {...signupForm.register("email", { required: "Email is required" })}
+                placeholder="Enter Your Email*"
+              />
+              {signupForm.formState.errors.email && <p>{signupForm.formState.errors.email.message}</p>}
+            </div>
+            <div className="input-box">
+              <i className="bx bxs-lock-alt"></i>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                {...signupForm.register("password", { required: "Password is required" })}
+                placeholder="Enter Your Password*"
+              />
+              {signupForm.formState.errors.password && <p>{signupForm.formState.errors.password.message}</p>}
+            </div>
+            <div className="input-box">
+              <i className="bx bxs-lock-alt"></i>
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                {...signupForm.register("confirmPassword", { required: "Please confirm your password" })}
+                placeholder="Confirm Your Password*"
+              />
+              {signupForm.formState.errors.confirmPassword && <p>{signupForm.formState.errors.confirmPassword.message}</p>}
+            </div>
+            <div className="forgot-section">
+              <span>
+                <input type="checkbox" /> Remember Me
+              </span>
+              <span>
+                <a href="#">Forgot Password?</a>
+              </span>
+            </div>
+            <div className="flex items-center justify-center pt-[2rem]">
+              <button type="submit" className="px-[2rem] py-[.5rem] rounded-lg bg-tradewind text-lg">Register</button>
+            </div>
+          </form>
+          <p className="LoginBtn" onClick={handleLoginClick}>
+            <a href="#">Login Now</a>
+          </p>
         </div>
-        <p className="LoginBtn" onClick={handleLoginClick}>
-          <a href="#">Login Now</a>
-        </p>
-      </div>
+      )}
     </div>
   );
 };

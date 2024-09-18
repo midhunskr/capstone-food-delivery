@@ -1,10 +1,10 @@
 
 import PropTypes from "prop-types";
 
-export const Footer = ({ className = "" }) => {
+export const AdminFooter = ({ className = "" }) => {
   return (
     <div
-      className={`[background:linear-gradient(#2b2b2b,_#2b2b2b),_#fff] max-w-full overflow-hidden flex flex-col items-center justify-start pt-[78px] pb-[123px] pl-5 pr-[21px] box-border gap-[88px] leading-[normal] tracking-[normal] text-left text-base text-white font-arial-rounded-mt-bold mq750:gap-[22px] mq1125:gap-11 ${className}`}
+      className={`self-stretch [background:linear-gradient(#2b2b2b,_#2b2b2b),_#fff] max-w-full overflow-hidden flex flex-col items-center justify-start pt-[78px] pb-[123px] pl-5 pr-[21px] box-border gap-[88px] leading-[normal] tracking-[normal] text-left text-base text-white font-arial-rounded-mt-bold mq750:gap-[22px] mq1125:gap-11 ${className}`}
     >
       <section className="w-[1074px] flex flex-row items-start justify-between gap-5 max-w-full text-left text-lg text-white font-quicksand mq1025:flex-wrap">
         <div className="flex flex-col items-start justify-start py-0 pl-0 pr-[5px] gap-2.5 text-xl">
@@ -137,6 +137,6 @@ export const Footer = ({ className = "" }) => {
   );
 };
 
-Footer.propTypes = {
+AdminFooter.propTypes = {
   className: PropTypes.string,
 };

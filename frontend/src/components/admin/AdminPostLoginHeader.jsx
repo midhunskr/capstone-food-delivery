@@ -1,19 +1,8 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux'
-import { userLogout } from "../../services/userApi";
+import { Link } from "react-router-dom";
 
-export const UserHeader = ({ className = "" }) => {
-
-  //Logout
-  const handleLogout = async () => {
-    const response = await userLogout()
-    if (response?.success) {
-      navigate('/')
-    }
-  }
-
+export const AdminPostLoginHeader = ({ className = "" }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const handleMouseEnter = () => {
     setIsProfileMenuOpen(true);
@@ -22,25 +11,6 @@ export const UserHeader = ({ className = "" }) => {
   const handleMouseLeave = () => {
     setIsProfileMenuOpen(false);
   };
-
-  const cartItems = useSelector((state) => state.cart.cartItems)
-  const navigate = useNavigate()
-
-  //Handle duplicate item names
-  const groupedItems = cartItems.reduce((acc, item) => {
-    const existingItem = acc.find(i => i.name === item.name);
-
-    if (existingItem) {
-      // If an item with the same name exists, increment its quantity
-      existingItem.quantity += 1;
-    } else {
-      // Otherwise, add the item to the accumulator with a quantity of 1
-      acc.push({ ...item, quantity: 1 });
-    }
-
-    return acc;
-  }, []);
-
   return (
     <header
       className={`self-stretch shadow-[0px_4px_45.6px_-19px_rgba(0,_0,_0,_0.25)] bg-bg-white overflow-visible flex flex-row items-start justify-center pt-[1.625rem] px-[1.25rem] pb-[1.5rem] box-border gap-[5.35rem] top-[0] z-[99] sticky max-w-full text-left text-[1.031rem] text-text-dark font-montserrat lg:gap-[2.688rem] mq750:gap-[1.313rem] ${className}`}
@@ -156,30 +126,22 @@ export const UserHeader = ({ className = "" }) => {
                   className="block mb-2 hover:bg-tradewind hover:text-bg-white p-2 rounded no-underline text-dark"
                 >
                   Settings
-                </Link>           
-                <Link>
-                  <div onClick={() => handleLogout(navigate('/'))} className="block mb-2 w-full hover:bg-jaffa hover:text-bg-white p-2 rounded no-underline text-dark">
-                    Logout
-                  </div>
+                </Link>
+                <Link className="block mb-2 w-full hover:bg-jaffa hover:text-bg-white p-2 rounded no-underline text-dark">
+                  Logout
                 </Link>
               </div>
             )}
           </div>
         </div>
         <div className="flex flex-row items-start justify-start gap-[1.187rem] shrink-0">
-          <Link to={'/user/checkout'}><div className="flex flex-col items-start justify-start pt-[0.268rem] px-[0rem] pb-[0rem] cursor-pointer">
+          <div className="flex flex-col items-start justify-start pt-[0.268rem] px-[0rem] pb-[0rem]">
             <img
               className="w-[1.019rem] h-[1.019rem] relative object-cover"
               alt=""
               src="/frame-3798@2x.png"
             />
-            <div className="absolute pl-[.7rem] bottom-[.8rem]">
-              <div className="w-[1.2rem] h-[1.2rem]  text-mid bg-tradewind text-bg-white rounded-full flex items-center justify-center">
-                <b >{groupedItems.reduce((a, b) => a + b.quantity, 0)}</b>
-              </div>
-            </div>
           </div>
-          </Link>
           <a
             className="cartIcon [text-decoration:none] relative font-semibold text-[inherit] inline-block min-w-[2.813rem] whitespace-nowrap text-dark"
           >
@@ -191,6 +153,6 @@ export const UserHeader = ({ className = "" }) => {
   );
 };
 
-UserHeader.propTypes = {
+AdminPostLoginHeader.propTypes = {
   className: PropTypes.string,
 };

@@ -11,66 +11,113 @@ import { UserAuth } from "./protectedRoutes/UserAuth";
 import { HelpPage } from "../pages/publicUsers/HelpPage";
 import { ProfilePage } from "../pages/user/ProfilePage";
 import { ReduxTest } from "../components/user/restaurant/restaurantMain/reduxTest";
+import { AdminProfile } from "../pages/admin/AdminProfile";
+import { ManageRestaurant } from "../pages/admin/ManageRestaurant";
+import { AdminPreLoginLayout } from "../layouts/AdminPreLoginLayout";
+import { AdminLoginPage } from "../pages/admin/AdminLoginPage";
+import { AdminPostLoginLayout } from "../layouts/AdminPostLoginLayout";
 
 export const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <RootLayout/>,
-      children: [
-        {
-            path: '/',
-            element: <PublicLandingPage/>
-        },
-        {
-          path: 'help',
-          element: <HelpPage/>
-        }
-      ]
-    },
-    {
-      path: "user",
-      element: (
-        <UserAuth>
-          <UserLayout />
-        </UserAuth>
-      ),
-      children: [
-        {
-          path: "",
-          element: <HomePage/>
-        },
-        {
-          path: "restaurants",
-          element: <AllRestaurants/>
-        },
-        {
-          path: 'restaurant/:id',
-          element: <RestaurantPage/>
-        },
-        {
-          path: "pizzahut",
-          element: <PizzaHut/>
-        },
-        {
-          path: "profile",
-          element: <ProfilePage/>
-        },
-        {
-          path: "checkout",
-          element: <CheckoutPage/>
-        },
-        {
-          path: "checkout/success",
-          element: <h1>Payment Success</h1>
-        },
-        {
-          path: "checkout/cancel",
-          element: <h1>Payment Cancelled</h1>
-        },
-        {
-          path: "test",
-          element: <ReduxTest/>
-        }
-      ]
-    }
-  ])
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      {
+        path: '/',
+        element: <PublicLandingPage />
+      },
+      {
+        path: 'help',
+        element: <HelpPage />
+      }
+    ]
+  },
+  {
+    path: "user",
+    element: (
+      <UserAuth>
+        <UserLayout />
+      </UserAuth>
+    ),
+    children: [
+      {
+        path: "",
+        element: <HomePage />
+      },
+      {
+        path: "restaurants",
+        element: <AllRestaurants />
+      },
+      {
+        path: 'restaurant/:id',
+        element: <RestaurantPage />
+      },
+      {
+        path: "pizzahut",
+        element: <PizzaHut />
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />
+      },
+      {
+        path: "checkout/success",
+        element: <h1>Payment Success</h1>
+      },
+      {
+        path: "checkout/cancel",
+        element: <h1>Payment Cancelled</h1>
+      },
+      {
+        path: "test",
+        element: <ReduxTest />
+      }
+    ]
+  },
+  {
+    path: "admin/login",
+    element: (
+        <AdminPreLoginLayout />
+    ),
+    children: [
+      {
+        path: "",
+        element: <AdminLoginPage />
+      },
+    ]
+  },
+  {
+    path: "admin",
+    element: (
+      <UserAuth>
+        <AdminPostLoginLayout />
+      </UserAuth>
+    ),
+    children: [
+      {
+        path: "",
+        element: <AdminProfile />
+      },
+      {
+        path: "restaurants",
+        element: <AllRestaurants />
+      },
+      {
+        path: 'restaurant/:id',
+        element: <RestaurantPage />
+      },
+      {
+        path: "profile",
+        element: <AdminProfile />
+      },
+      {
+        path: "create-restaurant",
+        element: <ManageRestaurant />
+      }
+    ]
+  }
+])

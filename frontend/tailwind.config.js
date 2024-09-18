@@ -28,6 +28,7 @@ export default {
         jaffa: "#f47c57",       
         tradewind: "#68b19f",
         gainsboro: "#d9d9d9",
+        goldenrod: "#F8CF7C"  
       },
       spacing: {},
       fontFamily: {

@@ -1,5 +1,4 @@
 import PropTypes from "prop-types"
-import { loadStripe } from '@stripe/stripe-js'
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addToCart, decrement, increment } from "../../../redux/features/cartSlice"
@@ -14,6 +13,7 @@ export const PaymentDetails = () => {
         console.log("Updated cart items after decrement:", state.cart.cartItems); // Log the updated state
         return state.cart.cartItems;
     });
+    const [orderData, setOrderData] = useState(null)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -45,7 +45,6 @@ export const PaymentDetails = () => {
     }, []);
     console.log(groupedItems);
     
-
     //Price calculation
     const totalPrice = groupedItems.reduce((total, item) => {
         const itemTotalPrice = item.price * item.quantity
@@ -56,11 +55,31 @@ export const PaymentDetails = () => {
     const taxRate = (totalPrice * 18) / 100
     const grandTotal = totalPrice + deliveryFee + taxRate;
 
-    const makePayment = async () => {
-        try {
-            const stripe = await loadStripe(import.meta.env.VITE_STRIPE_Publishable_key);
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = () => {
+            resolve(true);
+          };
+          script.onerror = () => {
+            resolve(false);
+          };
+          document.body.appendChild(script);
+        });
+      };
 
-            // Prepare data to send to the backend 
+    const handlePayment = async () => {
+        const res = await loadRazorpayScript();
+        if (!res) {
+            alert('Razorpay SDK failed to load. Are you online?');
+            return;
+        } 
+        try {
+            const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+            console.log("keyId", razorpayKeyId);
+                  
+            // Prepare the order data to send to the backend
             const orderData = {
                 menuItems: groupedItems.map(item => ({
                     ...item,
@@ -71,7 +90,7 @@ export const PaymentDetails = () => {
                 deliveryFee,
                 taxRate,
                 grandTotal,
-                customerName: 'John Doe', // Get this from your frontend form
+                customerName: 'John Doe',
                 customerAddress: {
                     line1: '123 Main St',
                     city: 'New York',
@@ -80,27 +99,48 @@ export const PaymentDetails = () => {
                     postal_code: '10001'
                 }
             };
-            console.log("orderData================", orderData);
-
+    
+            // Send the order data to the backend to create a Razorpay order
             const response = await axiosInstance({
-                url: "/payment/create",
+                url: "/payment/create-razorpay-order",
                 method: "POST",
-                data: orderData,  // Send the entire orderData object
+                data: orderData,
                 withCredentials: true
             });
-
-            console.log("response.data=========", response.data);
-
-            const sessionId = response?.data?.sessionId;
-
-            const result = stripe.redirectToCheckout({
-                sessionId: sessionId
-            });
-
+    
+            const { orderId } = response.data;
+    
+            const options = {
+                key: razorpayKeyId, // Razorpay key from environment variables
+                amount: grandTotal * 100, // Amount in paise (multiply by 100)
+                currency: 'INR',
+                name: 'Chewes Food Delivery',
+                description: 'Order Payment',
+                order_id: orderId, // The order ID from the response
+                handler: function (response) {
+                    alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+                    // Handle post-payment tasks, like updating the database
+                    navigate('/user/checkout/success'); // Redirect to success page
+                },
+                prefill: {
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    contact: '9999999999',
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
+    
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+    
         } catch (error) {
-            console.log(error);
+            console.log("Error creating Razorpay order:", error);
         }
+        
     };
+    
 
     return (
         <div className="w-[30rem]">
@@ -199,7 +239,7 @@ export const PaymentDetails = () => {
                         <div className="pb-[2rem] pt-[1rem]">
                             <div className="w-full border-[.1rem] border-solid border-tradewind" />
                         </div>
-                        <div onClick={makePayment} className="flex justify-between py-[1rem] bg-tradewind items-center w-full h-[3rem] px-[1rem] text-bg-white text-xl rounded-[.5rem] cursor-pointer shadow-lg">
+                        <div onClick={handlePayment} className="flex justify-between py-[1rem] bg-tradewind items-center w-full h-[3rem] px-[1rem] text-bg-white text-xl rounded-[.5rem] cursor-pointer shadow-lg">
                             <b>TO PAY</b>
                             <b>₹{grandTotal}</b>
                         </div>
