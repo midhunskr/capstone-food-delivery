@@ -90,7 +90,7 @@ export const LoginForm = () => {
               </span>
             </div>
             <div className="flex items-center justify-center pt-[2rem]">
-              <button type="submit" className="px-[2rem] py-[.5rem] rounded-lg bg-tradewind text-lg">Login</button>
+              <button type="submit" className="bg-bg-white text-tradewind py-[.5rem] font-bold rounded-md text-xl border-[.14rem] border-solid border-tradewind w-full hover:bg-tradewind hover:text-bg-white hover:cursor-pointer">Login</button>
             </div>
           </form>
           <p className="RegisterBtn" onClick={handleRegisterClick}>
@@ -139,7 +139,7 @@ export const LoginForm = () => {
               </span>
             </div>
             <div className="flex items-center justify-center pt-[2rem]">
-              <button type="submit" className="px-[2rem] py-[.5rem] rounded-lg bg-tradewind text-lg">Register</button>
+              <button type="submit" className="bg-bg-white text-tradewind py-[.5rem] font-bold rounded-md text-xl border-[.14rem] border-solid border-tradewind w-full hover:bg-tradewind hover:text-bg-white hover:cursor-pointer">Register</button>
             </div>
           </form>
           <p className="LoginBtn" onClick={handleLoginClick}>
