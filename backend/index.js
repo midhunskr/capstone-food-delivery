@@ -10,7 +10,7 @@ const app = express()
 
 //CORS for Authentication
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://chewse-food-delivery.vercel.app',
   credentials: true
 }))
 
