@@ -9,7 +9,7 @@ export const registerUser = async (req, res) => {
         const { name, email, password, role, phone} = req.body
 
         //error handling for missing field
-        if (!name || !email || !password || !phone) {
+        if (!email || !password ) {
             return res.status(400).json({success: false, message: "All fields are required"})
         }
 
@@ -25,7 +25,7 @@ export const registerUser = async (req, res) => {
 
         //save new user to database
         const newUser = new User({name, email, password: hashedPassword, role, phone})
-        await newUser.save()
+        await newUser.save()    
 
         //tokenize user data
         const token = generateUserToken(email)
@@ -44,7 +44,7 @@ export const loginUser = async (req, res) => {
     
     try {
         const { email, password} = req.body
-
+             
         //Error handling for missing field
         if (!email || !password) {
             return res.status(400).json({success: false, message: "All fields are required"})

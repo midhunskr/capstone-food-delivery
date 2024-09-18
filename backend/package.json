@@ -26,8 +26,7 @@
     "npm": "^10.8.2",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "razorpay": "^2.9.4",
-    "stripe": "^16.11.0"
+    "razorpay": "^2.9.4"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

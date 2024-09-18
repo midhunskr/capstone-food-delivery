@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+
 import { Restaurant } from "../models/restaurantModel.js";
 import { cloudinaryInstance } from "../config/cloudinary.js";
 
