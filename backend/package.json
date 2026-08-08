@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --env-file=.env index.js",
+    "dev": "nodemon --env-file=.env --exec \"node --require=./dns-bootstrap.cjs\" index.js",
     "start": "node index.js",
     "start:local": "node --env-file=.env index.js",
     "seed": "node --env-file=.env seed/index.js",
