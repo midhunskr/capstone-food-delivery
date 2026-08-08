@@ -8,7 +8,7 @@
     "dev": "nodemon --env-file=.env --exec \"node --require=./dns-bootstrap.cjs\" index.js",
     "start": "node index.js",
     "start:local": "node --env-file=.env index.js",
-    "seed": "node --env-file=.env seed/index.js",
+    "seed": "node --env-file=.env --require=./dns-bootstrap.cjs seed/index.js",
     "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\"",
     "dev:memory": "node scripts/dev-memory.js"
   },
