@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/*
+  Design tokens.
+
+  One primary (paprika), a warm paper background, high-contrast ink text, and a
+  narrow set of semantic colours. Food photography is meant to be the loudest
+  thing on screen, so the chrome stays quiet.
+*/
+@theme {
+  /* brand */
+  --color-paprika-50: #fff4f0;
+  --color-paprika-100: #ffe4d9;
+  --color-paprika-200: #ffc7b3;
+  --color-paprika-300: #ffa183;
+  --color-paprika-400: #fb7550;
+  --color-paprika-500: #ee4f24;
+  --color-paprika-600: #d93c14;
+  --color-paprika-700: #b52d0f;
+  --color-paprika-800: #922814;
+  --color-paprika-900: #782514;
+
+  /* warm neutrals */
+  --color-paper: #fdfaf6;
+  --color-surface: #ffffff;
+  --color-sand-50: #faf7f2;
+  --color-sand-100: #f4efe7;
+  --color-sand-200: #e8e0d4;
+  --color-sand-300: #d6cabb;
+  /* ink-400 carries secondary text (cuisines, area, counts). Darkened from
+     #8a8178 to clear WCAG AA — it was 3.7:1 on paper, now ~4.8:1. */
+  --color-ink-400: #756c65;
+  --color-ink-500: #6b625a;
+  --color-ink-600: #4c443d;
+  --color-ink-700: #332c26;
+  --color-ink-900: #1c1714;
+
+  /* semantic */
+  --color-veg: #0e8a43;
+  --color-nonveg: #b3391f;
+  --color-success: #0f7a54;
+  --color-warning: #b7791f;
+  --color-danger: #c02f1d;
+  --color-gold-100: #fff3d1;
+  --color-gold-500: #f0a020;
+  --color-gold-700: #9a6510;
+
+  /* radii */
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+
+  /* elevation — soft and warm, never a grey drop shadow */
+  --shadow-card: 0 1px 2px rgb(28 23 20 / 0.04), 0 4px 16px rgb(28 23 20 / 0.06);
+  --shadow-lift: 0 2px 6px rgb(28 23 20 / 0.06), 0 12px 28px rgb(28 23 20 / 0.12);
+  --shadow-bar: 0 -1px 0 rgb(28 23 20 / 0.06), 0 -8px 24px rgb(28 23 20 / 0.06);
+
+  /* motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* layout */
+  --container-page: 76rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink-900);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Never let a rail or sticky bar cause sideways scroll. */
+    overflow-x: hidden;
+  }
+
+  /* Inputs must be >=16px on iOS or focusing them zooms the page. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-paprika-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-paprika-200);
+  }
+}
+
+@layer utilities {
+  /* Horizontal rails: snap, no visible scrollbar, edge padding preserved.
+     scroll-padding matters: without it the snap target is the scroll-port edge,
+     so the rail rests at scrollLeft = padding and the first card sits flush
+     against the viewport, out of line with the section heading above it. */
+  .rail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+  }
+
+  @media (min-width: 640px) {
+    .rail {
+      scroll-padding-inline: 1.5rem;
+    }
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail > * {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Tap feedback. The whole product should acknowledge a press instantly. */
+  .press {
+    transition: transform 140ms var(--ease-out-soft), box-shadow 200ms var(--ease-out-soft),
+      background-color 160ms var(--ease-out-soft), border-color 160ms var(--ease-out-soft),
+      color 160ms var(--ease-out-soft), opacity 160ms var(--ease-out-soft);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-sand-100) 25%,
+      var(--color-sand-50) 37%,
+      var(--color-sand-100) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  .fade-up {
+    animation: fadeUp 320ms var(--ease-out-soft) both;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Anyone who asks for less motion gets essentially none. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .press:active {
+    transform: none;
+  }
+}

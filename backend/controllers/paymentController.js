@@ -16,9 +16,6 @@ export const createPayment = async (req, res) => {
       receipt: `receipt_order_${Date.now()}`,
     };
 
-    console.log("requestBody=============",req.body);
-    
-    
     console.log("route hit 2");
 
     const order = await instance.orders.create(options);

@@ -1,48 +1,48 @@
-//Import packages
-import cors from 'cors'
-import express from 'express'
-import apiRouter from './routes/index.js'
-import cookieParser from 'cookie-parser'
-import { connectDB } from './config/db.js'
+import { env } from './config/env.js'
+import { connectDB, disconnectDB } from './config/db.js'
+import { createApp } from './app.js'
 
-//Assign express to 'app' variable
-const app = express()
+const app = createApp()
 
-//CORS for Authentication
-app.use(cors({
-  // origin: ['https://chewse-food-delivery.vercel.app', 'http://localhost:5173'],
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+const start = async () => {
+    await connectDB()
 
-app.options('*', cors()); // This will respond to preflight requests
+    const server = app.listen(env.port, () => {
+        console.log(`Server listening on port ${env.port} (${env.nodeEnv})`)
+    })
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://chewse-food-delivery.vercel.app');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  next();
-});
+    // A port collision is one of the most common local failures and Node's
+    // default output for it is a bare stack trace. Say what actually happened.
+    server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+            console.error(
+                `\nPort ${env.port} is already in use, so the API did not start.\n` +
+                `Something else is listening there. Either stop it, or set a different\n` +
+                `PORT in backend/.env — and update API_URL in web/.env.local to match.\n`
+            )
+        } else {
+            console.error('Server failed to start:', error)
+        }
+        process.exit(1)
+    })
 
+    const shutdown = async (signal) => {
+        console.log(`\n${signal} received, shutting down.`)
+        server.close(async () => {
+            await disconnectDB()
+            process.exit(0)
+        })
+        // Don't hang forever if a connection refuses to close.
+        setTimeout(() => process.exit(1), 10_000).unref()
+    }
 
-//Parsing incoming JSON requests and puts the parsed data in req.body 
-app.use(express.json())
-//Parsing incoming cookie
-app.use(cookieParser())
+    process.on('SIGINT', () => shutdown('SIGINT'))
+    process.on('SIGTERM', () => shutdown('SIGTERM'))
+}
 
-//Import PORT from 'env'
-const port = process.env.PORT
-
-//Connect Databse from 'config/db'
-connectDB()
-
-//Import 'apiRouter' from 'routes/index.js'
-app.use('/api', apiRouter)
-
-//Setup port
-app.listen(port, () => {
-  console.log(`Server started running on port ${port}`)
+start().catch((error) => {
+    console.error('Failed to start server:', error)
+    process.exit(1)
 })
+
+export default app
