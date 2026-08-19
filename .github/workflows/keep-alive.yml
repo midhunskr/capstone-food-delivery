@@ -1,17 +1,21 @@
 name: Keep Render backend awake
 
-# Render's free tier spins the service down after ~15 minutes of no traffic,
-# so the next real request pays a 10-50s cold start. Pinging the health
-# endpoint every 10 minutes keeps it warm without costing anything.
 on:
   schedule:
-    - cron: '*/10 * * * *'
-  workflow_dispatch: {}
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+
     steps:
       - name: Ping backend health endpoint
         run: |
-          curl -fsS --max-time 30 https://capstone-food-delivery.onrender.com/api/v2/health
+          echo "Pinging Render..."
+          curl -v --fail --show-error --silent \
+            --connect-timeout 10 \
+            --max-time 30 \
+            https://capstone-food-delivery.onrender.com/api/v2/health
+          echo ""
+          echo "Ping successful."
