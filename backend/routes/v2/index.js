@@ -7,6 +7,8 @@ import paymentRoutes from './paymentRoutes.js'
 import orderRoutes from './orderRoutes.js'
 import favouriteRoutes from './favouriteRoutes.js'
 import { generalLimiter } from '../../middlewares/v2/rateLimiters.js'
+import { requireDb } from '../../middlewares/v2/requireDb.js'
+import { isDbConnected } from '../../config/db.js'
 import { sendSuccess } from '../../utils/apiResponse.js'
 
 /**
@@ -19,9 +21,34 @@ const v2Router = express.Router()
 
 v2Router.use(generalLimiter)
 
-// Cheap liveness check — useful for Render health checks and for confirming a
-// deploy is actually serving v2.
-v2Router.get('/health', (req, res) => sendSuccess(res, { status: 'ok' }))
+/**
+ * Liveness — is the HTTP server itself up? Answers as soon as the process is
+ * listening, independent of database state, so Render (or anything else)
+ * calling this can tell the process is alive even mid-Mongo-outage.
+ *
+ * Keeps the standard { ok, data } envelope — this is still a v2 API response,
+ * just one whose data now reports connection state instead of a bare 'ok'.
+ */
+v2Router.get('/health', (req, res) => sendSuccess(res, {
+    status: 'ok',
+    server: 'up',
+    database: isDbConnected() ? 'connected' : 'disconnected',
+}))
+
+/**
+ * Readiness — is it safe to route real traffic here? 200 only once Mongo is
+ * connected, 503 otherwise. Distinct from /health so an orchestrator can tell
+ * "the process is alive" apart from "it can actually serve requests".
+ */
+v2Router.get('/ready', (req, res) => {
+    if (isDbConnected()) {
+        return res.status(200).json({ status: 'ready' })
+    }
+    return res.status(503).json({ status: 'not_ready' })
+})
+
+// Everything below needs Mongo — /health and /ready above are exempt.
+v2Router.use(requireDb)
 
 v2Router.use('/auth', authRoutes)
 v2Router.use('/addresses', addressRoutes)
